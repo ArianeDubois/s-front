@@ -1,15 +1,13 @@
 import type { KirbyQuerySchema } from '#nuxt-kql'
 
-export const notesQuery: KirbyQuerySchema = {
-  query: 'page("notes")',
+export const projectsQuery: KirbyQuerySchema = {
+  query: 'page("photography")',
   select: {
     title: true,
     intendedTemplate: true,
-    // description: true,
     subheadline: true,
-    text: 'page.text.kirbytext',
     children: {
-      query: 'page.children.listed.sortBy("date", "desc")',
+      query: 'page.children.listed',
       select: {
         id: true,
         title: true,

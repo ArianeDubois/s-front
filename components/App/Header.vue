@@ -14,31 +14,32 @@ const listedChildren = computed(() =>
     </NuxtLink>
 
     <nav class="menu">
-      <NuxtLink
-        v-for="item in listedChildren"
-        :key="item.id"
-        :to="`/${item.id}`"
-        :aria-current="
-          route.path.startsWith(`/${item.id}`) ? 'page' : undefined
-        "
-      >
+      <NuxtLink v-for="item in listedChildren" :key="item.id" :to="`/${item.id}`" :aria-current="route.path.startsWith(`/${item.id}`) ? 'page' : undefined
+        ">
         {{ item.title }}
       </NuxtLink>
-
-      <AppSocial />
     </nav>
   </header>
 </template>
 
 <style scoped>
+.header {
+  padding: 10px;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  gap: var(--padding-x);
+  z-index: 50;
+  top: 0;
+  left: 0;
+  right: 0;
+  font-family: "Maison Neue";
+  font-size: 15px;
+  text-transform: uppercase;
+}
+
 .menu {
   display: flex;
-}
-.menu a {
-  padding: 1rem;
-  display: block;
-}
-.menu a[aria-current] {
-  text-decoration: underline;
+  gap: var(--padding-x);
 }
 </style>

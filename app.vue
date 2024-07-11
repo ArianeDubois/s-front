@@ -5,18 +5,18 @@ import '~/assets/css/medium-zoom.css'
 
 <template>
   <Html lang="en">
-    <Head>
-      <Link rel="icon" href="/favicon.ico" type="image/x-icon" />
-    </Head>
 
-    <Body>
-      <AppHeader />
+  <Head>
+    <Link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  </Head>
 
-      <main class="main">
-        <NuxtPage />
-      </main>
+  <Body>
+    <AppHeader />
 
-      <AppFooter />
-    </Body>
+    <main class="main">
+      <NuxtPage />
+    </main>
+  </Body>
+
   </Html>
 </template>
