@@ -10,6 +10,10 @@ export default defineNuxtConfig({
   //   },
   // ],
 
+  app: {
+    pageTransition: { name: 'zoom' },
+  },
+
   image: {
     domains: ['http://s-back.test'],
 
@@ -21,6 +25,13 @@ export default defineNuxtConfig({
       xl: 1280,
       xxl: 1536,
       '2xl': 1536,
+    },
+  },
+  // plugins: ['~/plugins/gsap.js'],
+  gsap: {
+    extraPlugins: {
+      scrollTrigger: true,
+      scrollTo: true,
     },
   },
 

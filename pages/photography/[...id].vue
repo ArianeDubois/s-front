@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { $gsap } = useNuxtApp()
+
 const { data } = await useKql({
   query: `page("${useRoute().path}")`,
   select: {

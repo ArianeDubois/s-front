@@ -11,7 +11,6 @@ const { data } = await useKql({
   },
 })
 
-// Set the current page data for the global page context
 const page = data.value?.result
 setPage(page)
 
@@ -53,7 +52,7 @@ const { data: photographyData } = await useKql({
         <NuxtLink :to="`/${album.id}`">
           <figure>
             <img :src="album?.cover?.resized?.url ?? album?.images?.[0]?.resized?.url
-        " :alt="album?.cover?.alt ?? album?.images?.[0]?.alt" />
+              " :alt="album?.cover?.alt ?? album?.images?.[0]?.alt" />
             <figcaption>
               <span>
                 <span class="example-name">{{ album.title }}</span>

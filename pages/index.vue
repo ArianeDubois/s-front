@@ -91,7 +91,7 @@ onMounted(() => {
 
   <div v-if="carrouselImages">
     <div class="swipers">
-      <Swiper :speed="0" :modules="[EffectFade]" effect="fade" :loop="true" :slides-per-view="1" :slides-per-group="1"
+      <Swiper :speed="1" :modules="[EffectFade]" effect="fade" :loop="true" :slides-per-view="1" :slides-per-group="1"
         :space-between="0" :style="`cursor: url(${leftArrowSvg}), auto`" @click="slidePrev" @swiper="setFirstSwiper">
         <SwiperSlide v-for=" ( image, index  ) in  carrouselImages " :key="index">
           <figure>
@@ -101,7 +101,7 @@ onMounted(() => {
         </SwiperSlide>
       </Swiper>
 
-      <Swiper :speed="0" :modules="[EffectFade]" effect="fade" :loop="true" :initialSlide="1" :slides-per-view="1"
+      <Swiper :speed="1" :modules="[EffectFade]" effect="fade" :loop="true" :initialSlide="1" :slides-per-view="1"
         :slides-per-group="1" :space-between="0" @swiper="setSecondSwiper"
         :style="`cursor: url(${rightArrowSvg}), auto`" @click="slideNext">
 
