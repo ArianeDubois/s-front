@@ -10,13 +10,17 @@ const pageIndex = children?.findIndex(({ id }: any) => id === page?.id)
 </script>
 
 <template>
-  <nav class="blog-prevnext">
-    <h2 class="h2">Keep on reading</h2>
-
-    <div class="autogrid" style="--gutter: 1.5rem">
-      <AppProject v-if="pageIndex !== undefined && pageIndex > 0" :project="children[pageIndex - 1]" :excerpt="false" />
-      <AppProject v-if="pageIndex !== undefined && pageIndex < children.length - 1" :project="children[pageIndex + 1]"
-        :excerpt="false" />
-    </div>
+  <nav class="next-prev">
+    <AppProject v-if="pageIndex !== undefined && pageIndex > 0" :project="children[pageIndex - 1]" :excerpt="false"
+      :is-left="true" />
+    <AppProject v-if="pageIndex !== undefined && pageIndex < children.length - 1" :project="children[pageIndex + 1]"
+      :excerpt="false" />
   </nav>
 </template>
+
+<style scoped>
+.next-prev {
+  width: 100%;
+  height: 100%;
+}
+</style>

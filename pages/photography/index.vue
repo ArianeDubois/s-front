@@ -1,5 +1,5 @@
 <script setup>
-const { $gsap, $ScrollTrigger } = useNuxtApp()
+const { $gsap, $ScrollTrigger } = useNuxtApp();
 
 const { data } = await useKql({
   query: 'page("photography")',
@@ -30,21 +30,19 @@ const { data } = await useKql({
       },
     },
   },
-})
+});
 
-const page = data.value?.result
-setPage(page)
+const page = data.value?.result;
+setPage(page);
 
 const leftGridProjects = ref([]);
 const rightGridProjects = ref([]);
-const onEnter = ref(false)
+const onEnter = ref(false);
 const reorderedProjects = ref([]);
-const projects = ref(null)
+const projects = ref(null);
 const project = ref(null);
 
 const processProjects = () => {
-
-
   if (page.children) {
     const children = page.children;
 
@@ -73,8 +71,7 @@ const processProjects = () => {
       }
     }
   }
-}
-
+};
 
 processProjects();
 
@@ -82,67 +79,82 @@ definePageMeta({
   pageTransition: {
     name: 'zoom',
     onEnter: (el, done) => {
-      console.log('enter')
-
+      console.log('enter');
     },
-    onAfterEnter: (el) => { }
-  }
-})
-
+    onAfterEnter: (el) => { },
+  },
+});
 
 const test = () => {
   console.log('tex');
-}
+};
+
+const loadMoreProjects = () => {
+  // Append the projects to the end to create an infinite scroll effect
+  reorderedProjects.value.push(...reorderedProjects.value.slice(0, 10));
+};
+
+const handleScroll = () => {
+  const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+  const windowWidth = window.innerWidth;
+  const fullWidth = document.documentElement.scrollWidth;
+
+  if (scrollLeft + windowWidth >= fullWidth - 100) {
+    loadMoreProjects();
+  }
+};
+
+onMounted(() => {
+  onEnter.value = true;
+  window.addEventListener('scroll', handleScroll);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 
 onBeforeRouteLeave((to, from, next) => {
-  projects.value.classList.add("pointer-event-none")
+  projects.value.classList.add('pointer-event-none');
   if (to.name.startsWith('photography')) {
-
     const thumb = projects.value.querySelector(`[data-slug="${to.params['id'][0]}"]`);
-    const thumbBCR = thumb.getBoundingClientRect()
-      ;
+    const thumbBCR = thumb.getBoundingClientRect();
+    const imgbBCR = thumb.querySelector('img').getBoundingClientRect();
 
-    console.log(thumbBCR)
-    //-229 donc pour aller à droite c'est - et à gauchce c''est +'
-    console.log(projects.value.getBoundingClientRect());
+    // Cachez tous les autres projets sauf celui cliqué
+    const otherProjects = projects.value.querySelectorAll('.project');
+    otherProjects.forEach(project => {
+      if (project !== thumb.closest('.project')) {
+        $gsap.to(project, { opacity: 0, duration: 0.5 });
+      }
+    });
+    const scale = window.innerHeight / imgbBCR.height;
 
-    const windowCenterX = window.innerWidth / 3;
-    const windowCenterY = window.innerHeight / 3;
-
-    const thumbCenterX = thumbBCR.left + thumbBCR.width / 2;
-    const thumbCenterY = thumbBCR.top + thumbBCR.height / 2;
-
-    const dx = thumbCenterX;
-    const dy = windowCenterY - thumbCenterY;
-
-    $gsap.to(projects.value, {
+    // Appliquer la transformation au projet cliqué
+    $gsap.to(thumb.closest('.project'), {
       duration: 1,
-      x: dx,
-      y: dy,
-      scale: (1.5),
+      x: window.innerWidth / 2 - thumbBCR.left - thumbBCR.width / 2,
+      y: window.innerHeight / 2 - thumbBCR.top - thumbBCR.height / 2,
+      scale: scale,
       ease: 'power2.inOut',
+      onComplete: next
     });
   }
 
-  // thumb.appendChild(clone)
-
-})
-onMounted(() => {
-  onEnter.value = true
-})
-
+  // next();
+});
 </script>
+
 
 <template>
   <div class="page">
-    <Transition name="zoom" enter-from-class="zoom-from" enter-active-class="zoom-to" @enter="test()">
+    <Transition name="zoom" enter-from-class="zoom-from" enter-active-class="zoom-to" @enter="test">
       <ul class="projects" v-if="onEnter" ref="projects">
         <li v-for="(project, index) in reorderedProjects" :key="index" :data-slug="`${project.id.split('/')[1]}`"
           class="project">
           <NuxtLink :to="`/${project.id}`">
             <figure>
-              <img :src="project?.cover?.url ?? project?.images?.[0]?.url
-                " :alt="project?.cover?.alt ?? project?.images?.[0]?.alt" />
+              <img :src="project?.cover?.url ?? project?.images?.[0]?.url"
+                :alt="project?.cover?.alt ?? project?.images?.[0]?.alt" />
             </figure>
           </NuxtLink>
           <div>{{ index }}</div>
@@ -155,12 +167,12 @@ onMounted(() => {
 <style>
 .page {
   overflow: hidden;
-  font-family: "Maison Neue";
+  font-family: 'Maison Neue';
 }
 
 .projects {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 20px;
   margin: 0 -25%;
   transform: scale(1);
@@ -171,6 +183,12 @@ onMounted(() => {
 .project {
   object-fit: contain;
   position: relative;
+  transform-origin: top center;
+
+}
+
+.project img {
+  transform-origin: top left;
 }
 
 .zoom-to {

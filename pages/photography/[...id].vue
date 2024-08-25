@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { $gsap } = useNuxtApp()
+// const { $gsap } = useNuxtApp()
 
 const { data } = await useKql({
   query: `page("${useRoute().path}")`,
@@ -33,40 +33,36 @@ setPage(page)
 <template>
   <article>
     <div class="grid">
-      <div class="column" style="--columns: 8">
-        <ul class="album-gallery">
-          <li v-for="(image, index) in page?.gallery ?? []" :key="index">
-            <figure class="img" :style="`
-                  --w: ${image.width};
-                  --h: ${image.height};
-                `">
-              <ElementMediumZoom :src="image.resized.url" :data-zoom-src="image.url" :alt="image.alt" />
-            </figure>
-          </li>
-        </ul>
-      </div>
+      <ul class="album-gallery">
+        <li v-for="(image, index) in page?.gallery ?? []" :key="index">
+          <figure>
+            <img :src="image.url" :alt="image.alt" />
+          </figure>
+        </li>
+      </ul>
     </div>
     <LazyAppNavProject />
-
   </article>
 </template>
 
 <style scoped>
 .album-gallery {
-  line-height: 0;
-  columns: 1;
-  column-gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 100px;
+  gap: 30px;
 }
 
-.album-gallery li {
-  display: block;
-  margin-bottom: 1.5rem;
-  break-inside: avoid;
+figure {
+  height: 100vh;
+  width: auto;
 }
 
-@media screen and (min-width: 60rem) {
-  .album-gallery {
-    columns: 2;
-  }
+img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+
 }
 </style>

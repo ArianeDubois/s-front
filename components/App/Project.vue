@@ -1,47 +1,67 @@
 <script setup lang="ts">
+const { $gsap, $ScrollTrigger } = useNuxtApp();
+
 defineProps<{
   project?: Record<string, any>
   excerpt?: boolean
+  isLeft?: boolean
+
 }>()
+
+const prev = ref(null);
+const next = ref(null);
+
+onMounted(() => {
+  $gsap.to(next.value, {
+    duration: 1,
+    x: "-80%)",
+    ease: 'power2.inOut',
+  });
+  $gsap.to(prev.value, {
+    duration: 1,
+    x: "-80px",
+    ease: 'power2.inOut',
+  });
+});
 
 </script>
 
 <template>
-  <article class="project-excerpt">
+  <article :ref="`${isLeft ? 'prev' : 'next'}`"
+    :class="`${isLeft ? 'project-excerpt__left' : 'project-excerpt__right'} project-excerpt`">
     <NuxtLink :to="`/${project?.id}`">
-      <header>
-        <figure class="img" style="--w: 16; --h: 9">
-          <img :src="project?.cover?.url ?? project?.images?.[0]?.url" alt="" />
-        </figure>
-
-        <h2 class="project-excerpt-title">{{ project?.title }}</h2>
-      </header>
-
-      <div v-if="excerpt" class="project-excerpt-text">
-        {{ project?.text }}
-      </div>
+      <figure>
+        <img :src="project?.cover?.url ?? project?.images?.[0]?.url" alt="" />
+      </figure>
     </NuxtLink>
   </article>
 </template>
 
 <style scoped>
 .project-excerpt {
-  line-height: 1.5em;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  height: 100vh;
+  width: auto;
+  /* transform: translateX(-80%); */
 }
 
-.project-excerpt header {
-  margin-bottom: 1.5rem;
+.project-excerpt__left {
+  transform: translateX(180px);
+  right: 100%;
+
 }
 
-.project-excerpt figure {
-  margin-bottom: 0.5rem;
+.project-excerpt__right {
+  left: -100%;
+  transform: translateX(-100%);
+
 }
 
-.project-excerpt-title {
-  font-weight: 600;
-}
-
-.project-excerpt-date {
-  color: var(--color-text-grey);
+figure,
+img {
+  width: auto;
+  height: 100%;
 }
 </style>
