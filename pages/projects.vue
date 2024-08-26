@@ -1,4 +1,6 @@
 <script setup lang="ts">
+
+
 const { data } = await useKql({
   query: 'page("home")',
   select: {
@@ -23,7 +25,7 @@ const { data: photographyData } = await useKql({
       query: 'page.content.cover.toFile',
       select: {
         resized: {
-          query: 'file.resize(1024, 1024)',
+          query: 'file.resize(800, 800)',
           select: ['url'],
         },
         alt: true,
@@ -51,8 +53,9 @@ const { data: photographyData } = await useKql({
       <li v-for="(album, index) in photographyData?.result ?? []" :key="index">
         <NuxtLink :to="`/${album.id}`">
           <figure>
-            <img :src="album?.cover?.resized?.url ?? album?.images?.[0]?.resized?.url
-              " :alt="album?.cover?.alt ?? album?.images?.[0]?.alt" />
+            <NuxtImg loading="lazy" :src="album?.cover?.resized?.url ?? album?.images?.[0]?.resized?.url"
+              :alt="album?.cover?.alt ?? album?.images?.[0]?.alt" width="auto" height="auto" quality="80" format="webp"
+              sizes="xs:600px" />
             <figcaption>
               <span>
                 <span class="example-name">{{ album.title }}</span>
@@ -66,7 +69,7 @@ const { data: photographyData } = await useKql({
 </template>
 
 <style scoped>
-.home-grid {
+/* .home-grid {
   display: grid;
   list-style: none;
   grid-gap: 1.5rem;
@@ -147,5 +150,5 @@ const { data: photographyData } = await useKql({
   .home-grid a {
     padding-bottom: 52.65%;
   }
-}
+} */
 </style>

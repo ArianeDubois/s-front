@@ -20,6 +20,7 @@ setPage(page)
 
 const content = ref<HTMLElement | undefined>()
 useInternalLinks(content)
+
 </script>
 
 <template>

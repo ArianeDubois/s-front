@@ -10,18 +10,21 @@ defineProps<{
 
 const prev = ref(null);
 const next = ref(null);
-
 onMounted(() => {
-  $gsap.to(next.value, {
-    duration: 1,
-    x: "-80%)",
-    ease: 'power2.inOut',
-  });
-  $gsap.to(prev.value, {
-    duration: 1,
-    x: "-80px",
-    ease: 'power2.inOut',
-  });
+  if (next.value) {
+    $gsap.to(next.value, {
+      duration: 1,
+      x: "0",
+      ease: 'power2.inOut',
+    });
+  }
+  if (prev.value) {
+    $gsap.to(prev.value, {
+      duration: 1,
+      x: "0",
+      ease: 'power2.inOut',
+    });
+  }
 });
 
 </script>
@@ -44,24 +47,25 @@ onMounted(() => {
   bottom: 0;
   height: 100vh;
   width: auto;
-  /* transform: translateX(-80%); */
 }
 
+/* 100px de marge */
 .project-excerpt__left {
-  transform: translateX(180px);
-  right: 100%;
-
+  transform: translateX(-70px);
+  right: calc(100% - 70px);
 }
 
 .project-excerpt__right {
-  left: -100%;
-  transform: translateX(-100%);
+  left: calc(100% - 70px);
+  transform: translateX(70px);
 
 }
 
 figure,
 img {
-  width: auto;
   height: 100%;
+  width: auto;
+  max-width: calc(100vw - 100px);
+  object-fit: contain;
 }
 </style>

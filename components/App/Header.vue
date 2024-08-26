@@ -9,15 +9,25 @@ const listedChildren = computed(() =>
 
 <template>
   <header class="header">
-    <NuxtLink class="logo" to="/">
+    <!-- <NuxtLink class="logo" to="">
       {{ site.title }}
-    </NuxtLink>
+    </NuxtLink>-->
 
     <nav class="menu">
-      <NuxtLink v-for="item in listedChildren" :key="item.id" :to="`/${item.id}`" :aria-current="route.path.startsWith(`/${item.id}`) ? 'page' : undefined
+      <!-- <NuxtLink v-for="item in listedChildren" :key="item.id" :to="`/${item.id}`" :aria-current="route.path.startsWith(`/${item.id}`) ? 'page' : undefined
         ">
         {{ item.title }}
+      </NuxtLink>  -->
+      <a href="/">
+        Simon Guittet
+      </a>
+
+      <NuxtLink to="/photography">
+        Projets
       </NuxtLink>
+
+      <NuxtLink to="/about">
+        À propos </NuxtLink>
     </nav>
   </header>
 </template>

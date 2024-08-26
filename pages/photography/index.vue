@@ -21,7 +21,7 @@ const { data } = await useKql({
           },
         },
         image: {
-          query: 'page.images.first',
+          query: 'page.images.sortBy("sort", "asc").first',
           select: {
             url: true,
             alt: true,
@@ -41,6 +41,7 @@ const onEnter = ref(false);
 const reorderedProjects = ref([]);
 const projects = ref(null);
 const project = ref(null);
+const clonedImage = ref(null);
 
 const processProjects = () => {
   if (page.children) {
@@ -53,7 +54,7 @@ const processProjects = () => {
 
     for (let i = 0; i < children.length; i++) {
       if (i == 0) {
-        reorderedProjects.value.unshift(oddProjects[0]);
+        reorderedProjects.value.unshift({ ...oddProjects[0], isClone: true });
         oddProjects.shift();
       }
 
@@ -61,11 +62,12 @@ const processProjects = () => {
 
       if ((i + 1) % 2 === 0) {
         if (evenIndex < evenProjects.length) {
-          reorderedProjects.value.push(evenProjects[evenIndex]);
+          reorderedProjects.value.push({ ...evenProjects[evenIndex], isClone: true });
           evenIndex++;
         }
         if (oddIndex < oddProjects.length) {
-          reorderedProjects.value.push(oddProjects[oddIndex]);
+
+          reorderedProjects.value.push({ ...oddProjects[oddIndex], isClone: true });
           oddIndex++;
         }
       }
@@ -79,9 +81,10 @@ definePageMeta({
   pageTransition: {
     name: 'zoom',
     onEnter: (el, done) => {
-      console.log('enter');
     },
-    onAfterEnter: (el) => { },
+    onLeave(el, done) {
+      done();
+    },
   },
 });
 
@@ -89,36 +92,18 @@ const test = () => {
   console.log('tex');
 };
 
-const loadMoreProjects = () => {
-  // Append the projects to the end to create an infinite scroll effect
-  reorderedProjects.value.push(...reorderedProjects.value.slice(0, 10));
-};
-
-const handleScroll = () => {
-  const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-  const windowWidth = window.innerWidth;
-  const fullWidth = document.documentElement.scrollWidth;
-
-  if (scrollLeft + windowWidth >= fullWidth - 100) {
-    loadMoreProjects();
-  }
-};
-
 onMounted(() => {
   onEnter.value = true;
-  window.addEventListener('scroll', handleScroll);
 });
 
-onBeforeUnmount(() => {
-  window.removeEventListener('scroll', handleScroll);
-});
 
 onBeforeRouteLeave((to, from, next) => {
   projects.value.classList.add('pointer-event-none');
   if (to.name.startsWith('photography')) {
-    const thumb = projects.value.querySelector(`[data-slug="${to.params['id'][0]}"]`);
+    const thumb = projects.value.querySelector(`[data-slug="${to.params['id'][0]}"]:not(.clone)`);
     const thumbBCR = thumb.getBoundingClientRect();
     const imgbBCR = thumb.querySelector('img').getBoundingClientRect();
+    // nextImageUrl.value = thumb.querySelector('img').src;
 
     // Cachez tous les autres projets sauf celui cliqué
     const otherProjects = projects.value.querySelectorAll('.project');
@@ -127,37 +112,80 @@ onBeforeRouteLeave((to, from, next) => {
         $gsap.to(project, { opacity: 0, duration: 0.5 });
       }
     });
+
     const scale = window.innerHeight / imgbBCR.height;
 
-    // Appliquer la transformation au projet cliqué
-    $gsap.to(thumb.closest('.project'), {
+    const scaledWidth = thumbBCR.width * scale;
+    const scaledHeight = thumbBCR.height * scale;
+    const x = (window.innerWidth / 2) - (imgbBCR.left + (imgbBCR.width / 2));
+    const y = (window.innerHeight / 2) - (imgbBCR.top + (imgbBCR.height / 2));
+    $gsap.to('.index', {
+      opacity: 0
+    })
+
+    clonedImage.value = thumb.querySelector('img').cloneNode(true);
+    clonedImage.value.classList.add('transition-clone')
+    document.body.appendChild(clonedImage.value);
+
+    $gsap.set(clonedImage.value, {
+      position: 'absolute',
+      top: imgbBCR.top,
+      left: imgbBCR.left,
+      width: imgbBCR.width,
+      height: imgbBCR.height,
+      zIndex: 10,
+    });
+    $gsap.set(thumb.querySelector('img'), {
+      opacity: 0
+    });
+
+    $gsap.to(clonedImage.value, {
       duration: 1,
-      x: window.innerWidth / 2 - thumbBCR.left - thumbBCR.width / 2,
-      y: window.innerHeight / 2 - thumbBCR.top - thumbBCR.height / 2,
+      x: x,
+      y: y,
       scale: scale,
       ease: 'power2.inOut',
-      onComplete: next
+      onComplete: () => {
+        // transitioning.value = true;
+        next();
+      },
     });
-  }
 
-  // next();
+    // $gsap.to(thumb.querySelector('img'), {
+    //   duration: 1,
+    //   x: x,
+    //   y: y,
+    //   scale: scale,
+    //   ease: 'power2.inOut',
+    //   onComplete: () => {
+    //     next();
+    //   }
+    // });
+  }
 });
 </script>
 
 
 <template>
+  <!--
+  <head>
+    <link rel="preload" :href="nextImageUrl" as="image">
+  </head> -->
+
   <div class="page">
     <Transition name="zoom" enter-from-class="zoom-from" enter-active-class="zoom-to" @enter="test">
       <ul class="projects" v-if="onEnter" ref="projects">
+
         <li v-for="(project, index) in reorderedProjects" :key="index" :data-slug="`${project.id.split('/')[1]}`"
-          class="project">
+          :class="['project', { clone: project.isClone, 'pointer-events-none': project.isClone }]">
           <NuxtLink :to="`/${project.id}`">
             <figure>
-              <img :src="project?.cover?.url ?? project?.images?.[0]?.url"
-                :alt="project?.cover?.alt ?? project?.images?.[0]?.alt" />
+              <NuxtImg loading="lazy" :src="project?.image?.url ?? project?.images?.[0]?.url"
+                :alt="project?.cover?.alt ?? project?.images?.[0]?.alt" width="auto" height="auto" quality="80"
+                format="webp" sizes="xs:600px" />
             </figure>
           </NuxtLink>
-          <div>{{ index }}</div>
+          <div class="index">{{ index }}</div>
         </li>
       </ul>
     </Transition>
@@ -165,6 +193,10 @@ onBeforeRouteLeave((to, from, next) => {
 </template>
 
 <style>
+.pointer-events-none {
+  pointer-events: none;
+}
+
 .page {
   overflow: hidden;
   font-family: 'Maison Neue';
@@ -183,12 +215,13 @@ onBeforeRouteLeave((to, from, next) => {
 .project {
   object-fit: contain;
   position: relative;
-  transform-origin: top center;
+  transform-origin: center;
 
 }
 
 .project img {
-  transform-origin: top left;
+  /* transform-origin: top left; */
+  transform-origin: center;
 }
 
 .zoom-to {
