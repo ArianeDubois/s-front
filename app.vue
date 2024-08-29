@@ -18,9 +18,23 @@ import '~/assets/css/medium-zoom.css'
     <main class="main">
       <NuxtPage />
     </main>
+
   </Body>
 
   </Html>
 </template>
 
-<style></style>
+<style>
+/* .infos-is-active .overlay-bg {
+  position: absolute;
+  inset: 0;
+  background-color: white;
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.infos-is-active .overlay-bg {
+  opacity: 0.8;
+} */
+</style>

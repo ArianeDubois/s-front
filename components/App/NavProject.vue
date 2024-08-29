@@ -11,24 +11,96 @@ const pageIndex = children?.findIndex(({ id }: any) => id === page?.id)
 const prevEl = ref(null)
 const nextEl = ref(null)
 const navEl = ref(null)
+const cloneLeft = ref(null)
+const cloneRight = ref(null)
 
 onBeforeRouteUpdate((to, from, next) => {
-  //Prev
-  if (to.fullPath == '/' + children[pageIndex - 1].id) {
-    const thumbWidth = prevEl.value.$el.getBoundingClientRect().width;
-    const translataValue = (window.innerWidth / 2) - (window.innerWidth * 4 / 100) + thumbWidth / 2;
-    $gsap.to(navEl.value.parentElement, { x: translataValue, duration: 0.5, onComplete: next });
 
+  console.log(navEl.value.parentElement)
+  //Prev
+
+  if (pageIndex > 0 && to.fullPath == '/' + children[pageIndex - 1].id) {
+    const thumbWidth = prevEl.value.$el.getBoundingClientRect().width;
+    const thumbImage = prevEl.value.$el
+
+    cloneLeft.value = thumbImage.cloneNode(true);
+    cloneLeft.value.classList.add('transition-clone')
+    document.body.appendChild(cloneLeft.value);
+
+    $gsap.to(thumbImage, {
+      opacity: 0,
+    });
+
+    $gsap.to('header', {
+      opacity: 0,
+    });
+
+    $gsap.set(cloneLeft.value, {
+      position: 'absolute',
+      top: thumbImage.getBoundingClientRect().top,
+      left: thumbImage.getBoundingClientRect().left,
+      right: thumbImage.getBoundingClientRect().right,
+      bottom: thumbImage.getBoundingClientRect().bottom,
+      width: thumbImage.getBoundingClientRect().width,
+      height: thumbImage.getBoundingClientRect().height,
+      zIndex: 10,
+    });
+
+    const translateValue = (window.innerWidth / 2) - 70 + thumbWidth / 2;
+    $gsap.to(navEl.value.parentElement, {
+      x: translateValue, duration: 0.4,
+
+    });
+    $gsap.to(cloneLeft.value, {
+      x: translateValue, duration: 0.4,
+      onComplete: () => {
+        next();
+      },
+    });
   }
   //Next
-  else if (to.name === 'photography-id') {
-    console.log(next)
+  if (pageIndex >= 0 && to.fullPath == '/' + children[pageIndex + 1].id) {
 
     const thumbWidth = nextEl.value.$el.getBoundingClientRect().width;
-    const translataValue = (window.innerWidth / 2) - (window.innerWidth * 4 / 100) + thumbWidth / 2;
-    $gsap.to(navEl.value.parentElement, {
-      x: -translataValue, duration: 0.5, onComplete: next
+    const thumbImage = nextEl.value.$el
+
+    cloneRight.value = thumbImage.cloneNode(true);
+    cloneRight.value.classList.add('transition-clone')
+    document.body.appendChild(cloneRight.value);
+
+    $gsap.to(thumbImage, {
+      opacity: 0,
     });
+
+    $gsap.to('header', {
+      opacity: 0,
+    });
+
+    $gsap.set(cloneRight.value, {
+      position: 'absolute',
+      top: thumbImage.getBoundingClientRect().top,
+      left: thumbImage.getBoundingClientRect().left,
+      right: thumbImage.getBoundingClientRect().right,
+      bottom: thumbImage.getBoundingClientRect().bottom,
+      width: thumbImage.getBoundingClientRect().width,
+      height: thumbImage.getBoundingClientRect().height,
+      zIndex: 10,
+    });
+
+
+    const translateValue = - ((window.innerWidth / 2) - 70 + thumbWidth / 2);
+
+    $gsap.to(cloneRight.value, {
+      x: translateValue, duration: 0.7,
+    });
+
+    $gsap.to(navEl.value.parentElement, {
+      x: translateValue, duration: 0.7, onComplete: () => {
+        next();
+      },
+    });
+
+
   }
   // next();
 })
@@ -41,6 +113,7 @@ onBeforeRouteUpdate((to, from, next) => {
     <AppProject ref="nextEl" v-if="pageIndex !== undefined && pageIndex < children.length - 1"
       :project="children[pageIndex + 1]" :excerpt="false" />
   </nav>
+
 </template>
 
 <style scoped>

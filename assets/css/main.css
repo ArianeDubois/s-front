@@ -1,8 +1,13 @@
 @font-face {
   font-family: 'Maison Neue';
-  src:
-    url('../MaisonNeue-Medium.woff2') format('woff2'),
-    url('../MaisonNeue-Medium.woff') format('woff');
+  /* src: url('../Gaya-Demo-Regular.ttf') format('truetype'); */
+  /* src: url('../PPEditorialOld-Regular.otf') format('opentype'); */
+  /* src: url('../PPEditorialOld-Ultralight.otf') format('opentype'); */
+
+  src: url('../TobiasTRIAL-Light.otf') format('opentype');
+  /* src: url('../TobiasTRIAL-Light.otf') format('opentype'); */
+  /* url('../MaisonNeue-Medium.woff2') format('woff2'),
+    url('../MaisonNeue-Medium.woff') format('woff'); */
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -24,7 +29,7 @@
 }
 
 :root {
-  --padding-x: 30px;
+  --padding-x: 24px;
   --padding: 0;
   --color-black: #000;
   --color-white: #fff;
@@ -43,6 +48,7 @@
   --color-code-aqua: #8abeb7;
   --color-code-blue: #7e9abf;
   --color-code-purple: #b294bb;
+  --font-base: 1rem;
   --font-family-sans: 'Maison Neue', Helvetica, Arial, sans-serif,
     --font-family-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo,
     Courier, monospace;
@@ -59,7 +65,10 @@ img {
 body {
   padding: var(--padding);
   margin: 0 auto;
+  font-family: 'Maison Neue';
+  font-size: 15px;
 }
+
 li {
   list-style: none;
 }

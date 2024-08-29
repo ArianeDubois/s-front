@@ -25,6 +25,8 @@ const { data } = await useKql({
           select: {
             url: true,
             alt: true,
+            height: true,
+            width: true,
           },
         },
       },
@@ -99,6 +101,10 @@ onMounted(() => {
 
 onBeforeRouteLeave((to, from, next) => {
   projects.value.classList.add('pointer-event-none');
+
+  if (document.querySelector('.low-quality')) {
+    $gsap.set('.low-quality', { opacity: 0 });
+  }
   if (to.name.startsWith('photography')) {
     const thumb = projects.value.querySelector(`[data-slug="${to.params['id'][0]}"]:not(.clone)`);
     const thumbBCR = thumb.getBoundingClientRect();
@@ -113,31 +119,33 @@ onBeforeRouteLeave((to, from, next) => {
       }
     });
 
-    const scale = window.innerHeight / imgbBCR.height;
+    const scaleX = (window.innerWidth - 200) / imgbBCR.width;
+    const scaleY = window.innerHeight / imgbBCR.height;
+    const scale = Math.min(scaleX, scaleY);
+
 
     const scaledWidth = thumbBCR.width * scale;
     const scaledHeight = thumbBCR.height * scale;
-    const x = (window.innerWidth / 2) - (imgbBCR.left + (imgbBCR.width / 2));
+    const x = (window.innerWidth / 2) - 10 - (imgbBCR.left + (imgbBCR.width / 2));
     const y = (window.innerHeight / 2) - (imgbBCR.top + (imgbBCR.height / 2));
     $gsap.to('.index', {
       opacity: 0
     })
 
-    clonedImage.value = thumb.querySelector('img').cloneNode(true);
-    clonedImage.value.classList.add('transition-clone')
-    document.body.appendChild(clonedImage.value);
+    if (!clonedImage.value) {
+      clonedImage.value = thumb.querySelector('img').cloneNode(true);
+      clonedImage.value.classList.add('transition-clone')
+      document.body.appendChild(clonedImage.value);
 
-    $gsap.set(clonedImage.value, {
-      position: 'absolute',
-      top: imgbBCR.top,
-      left: imgbBCR.left,
-      width: imgbBCR.width,
-      height: imgbBCR.height,
-      zIndex: 10,
-    });
-    $gsap.set(thumb.querySelector('img'), {
-      opacity: 0
-    });
+      $gsap.set(clonedImage.value, {
+        position: 'absolute',
+        top: imgbBCR.top + window.scrollY,
+        left: imgbBCR.left + window.scrollX,
+        width: imgbBCR.width,
+        height: imgbBCR.height,
+        zIndex: 10,
+      });
+    }
 
     $gsap.to(clonedImage.value, {
       duration: 1,
@@ -146,7 +154,6 @@ onBeforeRouteLeave((to, from, next) => {
       scale: scale,
       ease: 'power2.inOut',
       onComplete: () => {
-        // transitioning.value = true;
         next();
       },
     });
@@ -167,11 +174,6 @@ onBeforeRouteLeave((to, from, next) => {
 
 
 <template>
-  <!--
-  <head>
-    <link rel="preload" :href="nextImageUrl" as="image">
-  </head> -->
-
   <div class="page">
     <Transition name="zoom" enter-from-class="zoom-from" enter-active-class="zoom-to" @enter="test">
       <ul class="projects" v-if="onEnter" ref="projects">
@@ -179,20 +181,35 @@ onBeforeRouteLeave((to, from, next) => {
         <li v-for="(project, index) in reorderedProjects" :key="index" :data-slug="`${project.id.split('/')[1]}`"
           :class="['project', { clone: project.isClone, 'pointer-events-none': project.isClone }]">
           <NuxtLink :to="`/${project.id}`">
-            <figure>
-              <NuxtImg loading="lazy" :src="project?.image?.url ?? project?.images?.[0]?.url"
+            <figure
+              :style="`width: 100%; position: relative;padding-top: ${project?.image?.height / project?.image?.width * 100}%`">
+              <ElementLazyImage :src="project?.image?.url ?? project?.images?.[0]?.url"
+                :lowQualitySrc="project?.image?.url" :alt="project?.cover?.alt ?? project?.images?.[0]?.alt" />
+              <!-- <NuxtImg loading="lazy" :src="project?.image?.url ?? project?.images?.[0]?.url"
                 :alt="project?.cover?.alt ?? project?.images?.[0]?.alt" width="auto" height="auto" quality="80"
-                format="webp" sizes="xs:600px" />
+                format="webp" sizes="xs:600px" /> -->
+              <figcaption class="caption">
+                <div>
+                  Projet: {{ project.title }}
+                </div>
+                <div>
+                  Client: {{ project.client }}
+                </div>
+                <div>
+                  Crédit photo: {{ project.credit }}
+                </div>
+              </figcaption>
             </figure>
           </NuxtLink>
           <div class="index">{{ index }}</div>
         </li>
       </ul>
     </Transition>
+
   </div>
 </template>
 
-<style>
+<style scoped>
 .pointer-events-none {
   pointer-events: none;
 }
@@ -205,8 +222,8 @@ onBeforeRouteLeave((to, from, next) => {
 .projects {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 20px;
-  margin: 0 -25%;
+  gap: var(--padding-x);
+  margin: var(--padding-x) -25%;
   transform: scale(1);
   transform-origin: top;
   transition: transform 0.8s ease-in-out;
@@ -216,15 +233,66 @@ onBeforeRouteLeave((to, from, next) => {
   object-fit: contain;
   position: relative;
   transform-origin: center;
-
+  font-size: var(--font-base);
 }
 
-.project img {
-  /* transform-origin: top left; */
-  transform-origin: center;
+figure {
+  position: relative;
+  overflow: hidden;
+}
+
+.caption {
+  opacity: 0;
+  position: absolute;
+  inset: 0;
+  top: 5px;
+  left: 5px;
+  width: 100%;
+  color: black;
+  font-size: var(--font-base);
+  text-transform: uppercase;
+}
+
+
+body.infos-is-active .caption {
+  opacity: 1;
+  z-index: 100;
+}
+
+
+body.infos-is-active figure:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: white;
+  opacity: 0.8;
+}
+
+body.infos-is-active li {
+  pointer-events: none;
 }
 
 .zoom-to {
   transform: scale(0.7);
 }
+
+/* .clone figure {
+  height: 100%;
+  object-fit: cover;
+  padding-top: 0 !important;
+}
+
+.clone .lazy-image {
+  height: 100%;
+  width: 100%;
+  object-fit: cover !important;
+
+}
+
+.clone .lazy-image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover !important;
+
+} */
 </style>
