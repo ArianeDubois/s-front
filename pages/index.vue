@@ -1,9 +1,8 @@
 <script setup lang="ts">
-const { $gsap } = useNuxtApp()
+const { $gsap } = useNuxtApp();
 
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
-// import 'swiper/css/pagination';
 
 import { EffectCreative, Navigation, Pagination } from 'swiper/modules';
 
@@ -12,12 +11,16 @@ const swiperRight = ref(null);
 const leftArrowSvg = ref(null);
 const rightArrowSvg = ref(null);
 
-// Variables pour gérer le chargement
+// Variables for managing loading
 const imageLoadedCountLeft = ref(0);
 const imageLoadedCountRight = ref(0);
 const totalImages = ref(0);
-const allImagesLoadedLeft = computed(() => imageLoadedCountLeft.value >= totalImages.value);
-const allImagesLoadedRight = computed(() => imageLoadedCountRight.value >= totalImages.value);
+const allImagesLoadedLeft = computed(
+  () => imageLoadedCountLeft.value >= totalImages.value
+);
+const allImagesLoadedRight = computed(
+  () => imageLoadedCountRight.value >= totalImages.value
+);
 
 const { data } = await useKql({
   query: 'page("home")',
@@ -28,10 +31,10 @@ const { data } = await useKql({
     headline: true,
     subheadline: true,
   },
-})
+});
 
-const page = data.value?.result
-setPage(page)
+const page = data.value?.result;
+setPage(page);
 
 const { data: carrouselData, error: carrouselError } = await useKql({
   query: 'page("home").files',
@@ -41,15 +44,13 @@ const { data: carrouselData, error: carrouselError } = await useKql({
     alt: true,
     width: true,
     height: true,
-    project: true,  // Récupère le titre du projet
-    client: true,  // Récupère le nom du client
-    photographer: true,  // Récupère le crédit photo
-    width: true,
-    height: true,
+    project: true,
+    client: true,
+    photographer: true,
   },
-})
+});
 
-const carrouselImages = carrouselData.value?.result || []
+const carrouselImages = carrouselData.value?.result || [];
 
 totalImages.value = carrouselImages.length;
 
@@ -57,78 +58,81 @@ const setSecondSwiper = (right) => {
   swiperRight.value = right;
 };
 
-const slideChange = (swiper) => {
-}
-
 const setFirstSwiper = (left) => {
   swiperLeft.value = left;
 };
 
 const slidePrev = (swiper) => {
   swiper.slideNext();
-  // swiperRight.value.params.creativeEffect.limitProgress = 2;
-  // swiperRight.value.update();
   swiperRight.value.slideNext();
-}
+};
+
 const slideNext = (swiper) => {
   swiper.slideNext();
-  // swiperRight.value.params.creativeEffect.limitProgress = 1;
-  // swiperRight.value.update();
   swiperLeft.value.slideNext();
-
-}
-
-const props = defineProps({
-  height: { type: [Number, String], default: 500 },
-  src: {
-    type: String,
-    default: '/img/header-bg.jpg'
-  }
-})
-
-const img = useImage()
-const _srcset = computed(() => {
-  return img.getSizes(props.src, {
-    modifiers: {
-      format: 'webp',
-      quality: 80,
-      height: props.height
-    }
-  })
-})
+};
 
 const loadImageLeft = () => {
   imageLoadedCountLeft.value++;
-  console.log(`Image loaded: ${imageLoadedCountLeft.value}/${totalImages.value}`);
-}
+  console.log(
+    `Image loaded: ${imageLoadedCountLeft.value}/${totalImages.value}`
+  );
+};
 
 const loadImageRight = () => {
   imageLoadedCountRight.value++;
-  console.log(`Image loaded: ${imageLoadedCountRight.value}/${totalImages.value}`);
-}
+  console.log(
+    `Image loaded: ${imageLoadedCountRight.value}/${totalImages.value}`
+  );
+};
 
-// onBeforeRouteLeave((to, from, next) => {
-//   // var tl = $gsap.timeline({ duration: 0.5 }
-//   // );
+// Function to preload an image
+const preloadImage = (slide) => {
+  const img = slide.querySelector('img');
+  if (img && !img.complete) {
+    const src = img.getAttribute('src');
+    const newImg = new Image();
+    newImg.src = src;
+    newImg.onload = () => {
+      console.log(`Image preloaded: ${src}`);
+    };
+  }
+};
 
-//   // tl.to('.swiper-right .swiper-slide-active img', {
-//   //   scale: 0,
-//   // })
-//   // tl.to('.swiper-left .swiper-slide-active img', {
-//   //   scale: 0,
-//   // })
-//   // tl.to('.swiper-right .swiper-slide-active img', {
-//   //   scale: 0,
-//   //   onComplete: next()
-//   // })
-//   next()
-// })
+// Function called before the transition starts
+const beforeTransition = (swiper) => {
+  const nextIndex = swiper.activeIndex;
+  const nextSlide = swiper.slides[nextIndex];
 
+  // Preload the next image
+  preloadImage(nextSlide);
+
+  // Set initial GSAP state for the next image
+  const img = nextSlide.querySelector('img');
+  if (img) {
+    $gsap.set(img, { scale: 0, opacity: 0 });
+  }
+};
+
+// Function called after the transition ends
+const slideChangeTransitionEnd = (swiper) => {
+  const activeSlide = swiper.slides[swiper.activeIndex];
+
+  // Animate the image in the active slide
+  const img = activeSlide.querySelector('img');
+  if (img) {
+    $gsap.to(img, {
+      scale: 1,
+      opacity: 1,
+      duration: 0.5,
+    });
+  }
+};
 
 onMounted(() => {
-  document.querySelectorAll('.swiper-pagination-fraction').forEach(el => {
+  document.querySelectorAll('.swiper-pagination-fraction').forEach((el) => {
     el.style.mixBlendMode = 'difference';
-  })
+  });
   const customCursor = document.getElementById('custom-cursor');
   const showCursor = () => {
     customCursor.style.opacity = 1;
@@ -140,91 +144,65 @@ onMounted(() => {
   const handleMouseMove = (e) => {
     customCursor.style.left = `${e.clientX}px`;
     customCursor.style.top = `${e.clientY}px`;
-    // if (e.target.tagName === 'BUTTON') {
-    //   hideCursor();
-    // };
   };
-
-
 
   document.addEventListener('mousemove', handleMouseMove);
   document.addEventListener('mouseenter', showCursor);
   document.addEventListener('mouseleave', hideCursor);
 
-  if (allImagesLoadedRight && allImagesLoadedLeft) {
-    $gsap.set('.swiper-right .swiper-slide-active img', {
-      opacity: 0
-    });
-    $gsap.fromTo('.swiper-right .swiper-slide-active img', {
-      scale: 0,
-      opacity: 0
+  if (allImagesLoadedRight.value && allImagesLoadedLeft.value) {
+    // Initialize animations on the initial active slides
+    console.log('left')
 
-    }, {
-      scale: 1,
-      opacity: 1,
-      delay: 0.4
-    });
-    $gsap.fromTo('.swiper-left .swiper-slide-active img', {
-      scale: 0,
-    }, {
-      scale: 1,
-    });
+    const activeSlideLeft =
+      swiperLeft.value.slides[swiperLeft.value.activeIndex];
+    const imgLeft = activeSlideLeft.querySelector('img');
+    if (imgLeft) {
+      $gsap.set(imgLeft, { scale: 0, opacity: 0 });
+      $gsap.to(imgLeft, { scale: 1, opacity: 1, duration: 0.5 });
+    }
 
-    $gsap.fromTo('.swiper-right .swiper-zoom-container img', {
-      scale: 0.5,
-    }, {
-      scale: 1,
-    });
+    const activeSlideRight =
+      console.log('right')
+    swiperRight.value.slides[swiperRight.value.activeIndex];
+    const imgRight = activeSlideRight.querySelector('img');
+    if (imgRight) {
+      $gsap.set(imgRight, { scale: 0, opacity: 0 });
+      $gsap.to(imgRight, { scale: 1, opacity: 1, duration: 0.5 });
+    }
   }
-})
-
-// onBeforeUnmount(() => {
-//   document.removeEventListener('mousemove', handleMouseMove);
-//   document.removeEventListener('mouseenter', showCursor);
-//   document.removeEventListener('mouseleave', hideCursor);
-// });
-
+});
 </script>
-
 <template>
   <div>
-    <!-- Écran de chargement -->
+    <!-- Loading Screen -->
     <div v-if="!allImagesLoadedRight || !allImagesLoadedLeft" class="loading-screen">
-      <div class="icon-piment">
+      <div class="piment-el">
         <ElementIconPiment />
       </div>
       <p>Simon Guittet</p>
     </div>
 
-    <!-- Carrousel Swiper -->
+    <!-- Swiper Carousels -->
     <div v-if="carrouselImages" class="swipers">
       <div class="swiper-left">
-        <Swiper :pagination="{
-          type: 'fraction',
-        }" :initialSlide="1" :speed="400" :modules="[EffectCreative, Pagination]" effect="creative" :creative-effect="{
-          limitProgress: 1,
-          prev: {
-            scale: 3,
-          },
-          next: {
-            scale: 0,
-          }
-        }" :loop="true" :space-between="0" :style="`cursor: url(${leftArrowSvg}), auto`" @click="slidePrev"
-          @swiper="setFirstSwiper" @slideChange="slideChange">
-          <SwiperSlide v-for=" ( image, index  ) in carrouselImages " :key="index">
+        <Swiper :pagination="{ type: 'fraction' }" :initialSlide="1" :speed="400"
+          :modules="[EffectCreative, Pagination]" effect="creative" :creative-effect="{
+            limitProgress: 1,
+            prev: { scale: 3 },
+            next: { scale: 0 },
+          }" :loop="true" :space-between="0" :style="`cursor: url(${leftArrowSvg}), auto`" @click="slidePrev"
+          @swiper="setFirstSwiper" @slideChange="slideChange" @slideChangeTransitionStart="beforeTransition"
+          @slideChangeTransitionEnd="slideChangeTransitionEnd">
+          <SwiperSlide v-for="(image, index) in carrouselImages" :key="index">
             <figure>
-              <NuxtImg loading="lazy" :src="image.url" :alt="image.alt || 'Image description'" width="auto"
-                height="auto" quality="80" format="webp" sizes="xs:1800px" @load="loadImageLeft" />
-
+              <NuxtImg :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto" quality="80"
+                format="webp" sizes="xs:1800px" @load="loadImageLeft" />
             </figure>
             <figcaption class="caption">
-              <div v-if="image.project">
-                Projet: {{ image.project }}
-              </div>
+              <div v-if="image.project">Projet: {{ image.project }}</div>
 
-              <div v-if="image.client">
-                Client: {{ image.client }}
-              </div>
+              <div v-if="image.client">Client: {{ image.client }}</div>
 
               <div v-if="image.photographer">
                 Crédit photo: {{ image.photographer }}
@@ -235,19 +213,15 @@ onMounted(() => {
       </div>
 
       <div class="swiper-right">
-        <Swiper :pagination="{
-          type: 'fraction',
-        }" :speed="400" :modules="[EffectCreative, Pagination]" effect="creative" :creative-effect="{
-          limitProgress: 1,
-          prev: {
-            scale: 3,
-          },
-          next: {
-            scale: 0,
-          }
-        }" :loop="true" :initialSlide="1" :space-between="0" @swiper="setSecondSwiper" @slideChange="slideChange"
-          :style="`cursor: url(${rightArrowSvg}), auto`" @click="slideNext">
-          <SwiperSlide v-for="( image, index ) in carrouselImages " :key="index">
+        <Swiper :pagination="{ type: 'fraction' }" :speed="400" :modules="[EffectCreative, Pagination]"
+          effect="creative" :creative-effect="{
+            limitProgress: 1,
+            prev: { scale: 3 },
+            next: { scale: 0 },
+          }" :loop="true" :initialSlide="1" :space-between="0" @swiper="setSecondSwiper" @slideChange="slideChange"
+          :style="`cursor: url(${rightArrowSvg}), auto`" @click="slideNext"
+          @slideChangeTransitionStart="beforeTransition" @slideChangeTransitionEnd="slideChangeTransitionEnd">
+          <SwiperSlide v-for="(image, index) in carrouselImages" :key="index">
             <figure>
               <div class="swiper-zoom-container" data-swiper-zoom="5">
                 <NuxtImg :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto"
@@ -255,13 +229,9 @@ onMounted(() => {
               </div>
             </figure>
             <figcaption class="caption">
-              <div v-if="image.project">
-                Projet: {{ image.project }}
-              </div>
+              <div v-if="image.project">Projet: {{ image.project }}</div>
 
-              <div v-if="image.client">
-                Client: {{ image.client }}
-              </div>
+              <div v-if="image.client">Client: {{ image.client }}</div>
 
               <div v-if="image.photographer">
                 Crédit photo: {{ image.photographer }}
@@ -274,6 +244,7 @@ onMounted(() => {
     <div id="custom-cursor" class="custom-cursor">Next</div>
   </div>
 </template>
+
 
 <style scoped>
 /* .swiper {
@@ -402,9 +373,4 @@ body.infos-is-active .caption {
 .swiper-left .swiper-slide-active figure {
   transform: scale(1.1);
 }
-
-/* .icon-piment {
-  width: 30px;
-  height: 30px;
-} */
 </style>

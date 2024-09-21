@@ -1,6 +1,8 @@
 <script setup lang="ts">
-const { $gsap } = useNuxtApp()
+const { $gsap } = useNuxtApp();
+const router = useRouter(); // Utilisation de useRouter pour la navigation
 
+// Récupération des données du projet actuel
 const { data } = await useKql({
   query: `page("${useRoute().path}")`,
   select: {
@@ -11,9 +13,7 @@ const { data } = await useKql({
     tags: true,
     year: true,
     intendedTemplate: true,
-    // description: true,
     subheadline: true,
-
     gallery: {
       query: 'page.images.sortBy("sort", "asc")',
       select: {
@@ -40,51 +40,75 @@ const { data } = await useKql({
       },
     },
   },
-})
-//
-const page = data.value?.result
-setPage(page)
+});
+
+const page = data.value?.result;
+setPage(page);
+
+// Récupération des enfants (projets) de la page "photography"
+const { data: dataChildren } = await useKql({
+  query: 'page("photography")',
+  select: {
+    id: true,
+    title: true,
+    tags: true,
+    intendedTemplate: true,
+    subheadline: true,
+    children: {
+      query: 'page.children.listed',
+      select: {
+        id: true,
+        title: true,
+        url: true,
+        cover: {
+          query: 'page.content.cover.toFile',
+          select: {
+            url: true,
+            alt: true,
+            height: true,
+            width: true,
+          },
+        },
+      },
+    },
+  },
+});
+
+const children = dataChildren.value?.result?.children || [];
+const pageIndex = children.findIndex(({ id }) => id === page?.id);
+
 const infos = ref(null);
-
-
 const loaded = ref(false);
 
 const onLoad = () => {
   loaded.value = true;
 };
 
-
 onBeforeRouteLeave((to, from, next) => {
-  console.log('yoLeave')
+  console.log('yoLeave');
 
   if (document.querySelector('.transition-clone')) {
-    document.querySelectorAll('.transition-clone').forEach(el => {
-      el.remove();
-    })
+    document.querySelectorAll('.transition-clone').forEach(el => el.remove());
   }
   next();
+});
 
-})
 onBeforeRouteUpdate((to, from, next) => {
-  console.log('yo')
+  console.log('yo');
 
   if (document.querySelector('.transition-nav-clone')) {
     $gsap.to('.transition-clone', {
-      opacity: 0, duration: 0.5,
-      onComplete: document.querySelectorAll('.transition-nav-clone').forEach(el => {
-        console.log(el)
-        el.remove();
-      }),
+      opacity: 0,
+      duration: 0.5,
+      onComplete: () => document.querySelectorAll('.transition-nav-clone').forEach(el => el.remove()),
     });
   }
 
   if (document.querySelector('.transition-clone')) {
-    document.querySelectorAll('.transition-clone').forEach(el => {
-      el.remove();
-    })
+    document.querySelectorAll('.transition-clone').forEach(el => el.remove());
   }
   next();
-})
+});
 
 const imageLoad = () => {
   $gsap.to('header', {
@@ -93,33 +117,31 @@ const imageLoad = () => {
 
   if (document.querySelector('.transition-clone')) {
     $gsap.to('.transition-clone', {
-      opacity: 0, duration: 0.5,
-      onComplete: document.querySelectorAll('.transition-clone').forEach(el => {
-        console.log(el)
-        el.remove();
-      }),
+      opacity: 0,
+      duration: 0.5,
+      onComplete: () => document.querySelectorAll('.transition-clone').forEach(el => el.remove()),
     });
   }
+
   if (document.querySelector('.transition-nav-clone')) {
     $gsap.to('.transition-clone', {
-      opacity: 0, duration: 0.5,
-      onComplete: document.querySelectorAll('.transition-nav-clone').forEach(el => {
-        console.log(el)
-        el.remove();
-      }),
+      opacity: 0,
+      duration: 0.5,
+      onComplete: () => document.querySelectorAll('.transition-nav-clone').forEach(el => el.remove()),
     });
   }
 
   if (document.querySelector('.low-quality')) {
     $gsap.set('.low-quality', { opacity: 0 });
   }
-}
+};
+
+// Animation à l'affichage de la page
 onMounted(() => {
   $gsap.to(infos.value, { opacity: 1, duration: 0.25 });
-
-
 });
-</script>,
+</script>
+
 <template>
 
 
@@ -139,30 +161,36 @@ onMounted(() => {
       </ul>
     </div>
 
-    <ul ref="infos" class="infos">
-      <li class="icon">
-        <ElementIconPiment />
-      </li>
-      <li class="value title">
-        <div>{{ page.title }}</div>
-        <div class="key">Titre <br />du projet</div>
-      </li>
 
-      <li v-if="page.client" class="value">
-        <div>{{ page.client }}</div>
-        <div class="key">Client</div>
-      </li>
+    <div ref="infos" class="infos">
+      <NuxtLink v-if="children[pageIndex - 1]" :to="'/' + children[pageIndex - 1].id" class="button-nav">PREV</NuxtLink>
 
-      <li v-if="page.credit" class="value">
-        <div>{{ page.credit }}</div>
-        <div class="key">Crédit<br /> photo</div>
-      </li>
+      <ul class="content">
+        <li class="icon">
+          <ElementIconPiment />
+        </li>
+        <li class="value title">
+          <div>{{ page.title }}</div>
+          <div class="key">Titre <br />du projet</div>
+        </li>
 
-      <li v-if="page.year" c class="value">
-        <div>{{ page.year }}</div>
-        <div class="key">Année <br />de réalisation</div>
-      </li>
-    </ul>
+        <li v-if="page.client" class="value">
+          <div>{{ page.client }}</div>
+          <div class="key">Client</div>
+        </li>
+
+        <li v-if="page.credit" class="value">
+          <div>{{ page.credit }}</div>
+          <div class="key">Crédit<br /> photo</div>
+        </li>
+
+        <li v-if="page.year" c class="value">
+          <div>{{ page.year }}</div>
+          <div class="key">Année <br />de réalisation</div>
+        </li>
+      </ul>
+      <NuxtLink v-if="children[pageIndex + 1]" :to="'/' + children[pageIndex + 1].id" class="button-nav">Next</NuxtLink>
+    </div>
     <LazyAppNavProject />
   </article>
 </template>
@@ -186,8 +214,9 @@ onMounted(() => {
 .infos {
   position: fixed;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: space-between;
+  align-items: end;
+  width: 100%;
   flex-wrap: wrap;
   gap: 0 30px;
   bottom: 0;
@@ -195,16 +224,27 @@ onMounted(() => {
   right: 0;
   opacity: 0;
   z-index: 30;
+  /* transform: translateY(50%); */
   mix-blend-mode: difference;
-  position: sticky;
+}
 
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 1;
+  gap: 0 30px;
+  z-index: 30;
+  mix-blend-mode: difference;
 }
 
 .infos .icon {
   margin-bottom: 20px;
 }
 
-.infos .value {
+.infos .value,
+.button-nav {
   font-family: "Maison Neue";
   font-size: 50px;
   text-transform: uppercase;

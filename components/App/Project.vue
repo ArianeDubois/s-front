@@ -12,23 +12,6 @@ defineProps<{
 
 const prev = ref(null);
 const next = ref(null);
-onMounted(() => {
-  if (next.value) {
-    $gsap.to(next.value, {
-      duration: 1,
-      x: "0",
-      ease: 'power2.inOut',
-    });
-  }
-  if (prev.value) {
-    $gsap.to(prev.value, {
-      duration: 1,
-      x: "0",
-      ease: 'power2.inOut',
-    });
-  }
-});
-
 </script>
 
 <template>
@@ -49,29 +32,37 @@ onMounted(() => {
   top: 0;
   bottom: 0;
   height: 100vh;
-  width: calc(100% - 200px);
+  /* width: calc(100% - 200px); */
+  width: 100%;
+  margin: 0 100px;
   object-fit: contain;
 }
 
 /* 100px de marge */
 .project-excerpt__left {
-  transform: translateX(-70px);
-  right: calc(100% - 70px);
+  /* transform: translateX(calc(-100% + 200px)); */
+  transform: translateX(-100%);
+
+  right: 0;
+  left: 0;
+
 }
 
 .project-excerpt__right {
-  left: calc(100% - 70px);
-  transform: translateX(70px);
+  left: 0;
+  right: 0;
+  /* transform: translateX(calc(100% - 200px)); */
+  transform: translateX(100%);
 }
 
 .project-excerpt__right:not(.transition-clone) img {
 
-  object-position: left;
+  object-position: center;
   /* transform: trans; */
 }
 
 .project-excerpt__left:not(.transition-clone) img {
-  object-position: right;
+  object-position: center;
 }
 
 figure,
