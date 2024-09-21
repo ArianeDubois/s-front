@@ -5,6 +5,8 @@ defineProps<{
   project?: Record<string, any>
   excerpt?: boolean
   isLeft?: boolean
+  width?: number
+  height?: number
 
 }>()
 
@@ -34,7 +36,8 @@ onMounted(() => {
     :class="`${isLeft ? 'project-excerpt__left' : 'project-excerpt__right'} project-excerpt`">
     <NuxtLink :to="`/${project?.id}`">
       <figure>
-        <img :src="project?.cover?.url ?? project?.images?.[0]?.url" alt="" />
+        <NuxtImg :data-width="width" :data-height="height" format="webp" sizes="xs:1080px" quality="80"
+          :src="project.cover.url ?? project.images[0].url" alt="" />
       </figure>
     </NuxtLink>
   </article>
@@ -46,7 +49,8 @@ onMounted(() => {
   top: 0;
   bottom: 0;
   height: 100vh;
-  width: auto;
+  width: calc(100% - 200px);
+  object-fit: contain;
 }
 
 /* 100px de marge */
@@ -58,14 +62,25 @@ onMounted(() => {
 .project-excerpt__right {
   left: calc(100% - 70px);
   transform: translateX(70px);
+}
 
+.project-excerpt__right:not(.transition-clone) img {
+
+  object-position: left;
+  /* transform: trans; */
+}
+
+.project-excerpt__left:not(.transition-clone) img {
+  object-position: right;
 }
 
 figure,
 img {
   height: 100%;
-  width: auto;
-  max-width: calc(100vw - 100px);
+  width: 100%;
+  /* width: auto;
+  max-width: calc(100vw - 100px); */
   object-fit: contain;
+  display: inline-block;
 }
 </style>

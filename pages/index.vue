@@ -107,27 +107,49 @@ const loadImageRight = () => {
   console.log(`Image loaded: ${imageLoadedCountRight.value}/${totalImages.value}`);
 }
 
-onBeforeRouteLeave((to, from, next) => {
-  var tl = $gsap.timeline({ duration: 0.5 }
-  );
+// onBeforeRouteLeave((to, from, next) => {
+//   // var tl = $gsap.timeline({ duration: 0.5 }
+//   // );
 
-  tl.to('.swiper-right .swiper-slide-active img', {
-    scale: 0,
-  })
-  tl.to('.swiper-left .swiper-slide-active img', {
-    scale: 0,
-  })
-  tl.to('.swiper-right .swiper-slide-active img', {
-    scale: 0,
-    onComplete: next()
-  })
-})
+//   // tl.to('.swiper-right .swiper-slide-active img', {
+//   //   scale: 0,
+//   // })
+//   // tl.to('.swiper-left .swiper-slide-active img', {
+//   //   scale: 0,
+//   // })
+//   // tl.to('.swiper-right .swiper-slide-active img', {
+//   //   scale: 0,
+//   //   onComplete: next()
+//   // })
+//   next()
+// })
 
 
 onMounted(() => {
   document.querySelectorAll('.swiper-pagination-fraction').forEach(el => {
     el.style.mixBlendMode = 'difference';
   })
+  const customCursor = document.getElementById('custom-cursor');
+  const showCursor = () => {
+    customCursor.style.opacity = 1;
+  };
+
+  const hideCursor = () => {
+    customCursor.style.opacity = 0;
+  };
+  const handleMouseMove = (e) => {
+    customCursor.style.left = `${e.clientX}px`;
+    customCursor.style.top = `${e.clientY}px`;
+    // if (e.target.tagName === 'BUTTON') {
+    //   hideCursor();
+    // };
+  };
+
+
+
+  document.addEventListener('mousemove', handleMouseMove);
+  document.addEventListener('mouseenter', showCursor);
+  document.addEventListener('mouseleave', hideCursor);
 
   if (allImagesLoadedRight && allImagesLoadedLeft) {
     $gsap.set('.swiper-right .swiper-slide-active img', {
@@ -154,18 +176,25 @@ onMounted(() => {
       scale: 1,
     });
   }
-  // leftArrowSvg.value = 'data:image/svg+xml;base64,' + window.btoa('<svg width="31" height="27" viewBox="0 0 31 27" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M31 15.8722L16.0737 15.8722C13.5058 15.8722 11.1518 15.9257 7.88838 15.7652C9.38636 17.4237 11.9543 19.9916 14.2548 22.2921L18.9092 27L13.4523 27L7.24639 20.4196C5.10643 18.1192 2.80597 15.9257 0.879998 13.8392C2.80597 11.8598 5.10643 9.55929 7.24639 7.25883L13.4523 0.67844L18.9092 0.678439L14.2548 5.38636C11.9543 7.68682 9.38636 10.3618 7.88838 11.9133C11.1518 11.8598 13.5058 11.8063 16.0737 11.8063L31 11.8063L31 15.8722Z" fill="#777"/> </svg>');
-  // rightArrowSvg.value = 'data:image/svg+xml;base64,' + window.btoa('<svg width="31" height="27" viewBox="0 0 31 27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.879883 11.8063L15.8061 11.8063C18.3741 11.8063 20.7281 11.7528 23.9915 11.9133C22.4935 10.2548 19.9256 7.68682 17.6251 5.38636L12.9707 0.67844L18.4276 0.67844L24.6335 7.25883C26.7735 9.55929 29.0739 11.7528 30.9999 13.8392C29.0739 15.8187 26.7735 18.1192 24.6335 20.4196L18.4276 27L12.9707 27L17.6251 22.2921C19.9256 19.9916 22.4935 17.3167 23.9915 15.7652C20.7281 15.8187 18.3741 15.8722 15.8061 15.8722L0.879883 15.8722L0.879883 11.8063Z" fill="#777"/></svg>');
 })
+
+// onBeforeUnmount(() => {
+//   document.removeEventListener('mousemove', handleMouseMove);
+//   document.removeEventListener('mouseenter', showCursor);
+//   document.removeEventListener('mouseleave', hideCursor);
+// });
+
 </script>
 
 <template>
   <div>
     <!-- Écran de chargement -->
-    <!-- <div v-if="!allImagesLoadedRight || !allImagesLoadedLeft" class="loading-screen">
-      <ElementIconPiment />
+    <div v-if="!allImagesLoadedRight || !allImagesLoadedLeft" class="loading-screen">
+      <div class="icon-piment">
+        <ElementIconPiment />
+      </div>
       <p>Simon Guittet</p>
-    </div> -->
+    </div>
 
     <!-- Carrousel Swiper -->
     <div v-if="carrouselImages" class="swipers">
@@ -242,11 +271,27 @@ onMounted(() => {
         </Swiper>
       </div>
     </div>
-
+    <div id="custom-cursor" class="custom-cursor">Next</div>
   </div>
 </template>
 
 <style scoped>
+/* .swiper {
+  cursor: none !important;
+}
+
+.custom-cursor {
+  mix-blend-mode: difference;
+  position: absolute;
+  pointer-events: none;
+  font-family: 'Maison Neue';
+  font-size: var(--font-base);
+  text-transform: uppercase;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.2s ease;
+  opacity: 0;
+} */
+
 .loading-screen {
   position: fixed;
   inset: 0;
@@ -254,7 +299,7 @@ onMounted(() => {
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255);
   z-index: 1000;
   font-size: 1.5rem;
   font-weight: bold;
@@ -357,4 +402,9 @@ body.infos-is-active .caption {
 .swiper-left .swiper-slide-active figure {
   transform: scale(1.1);
 }
+
+/* .icon-piment {
+  width: 30px;
+  height: 30px;
+} */
 </style>

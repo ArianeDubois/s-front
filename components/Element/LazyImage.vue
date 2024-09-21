@@ -5,6 +5,7 @@ const props = defineProps({
   src: String,
   lowQualitySrc: String,
   alt: String,
+  sizes: String
 });
 
 const loaded = ref(false);
@@ -25,7 +26,7 @@ const onLowQualityLoad = () => {
 
     <!-- Image de haute qualité -->
     <NuxtImg :src="src" :alt="alt" class="high-quality" :class="{ 'loaded': loaded }" @load="onLoad" format="webp"
-      width="auto" height="auto" quality="80" sizes="xs:600px" />
+      width="auto" height="auto" quality="80" :sizes="sizes" />
     <NuxtImg :src="lowQualitySrc" :alt="alt" :style="{ 'opacity: 0': loaded }" class="low-quality"
       @load="onLowQualityLoad" format="webp" width="auto" height="auto" quality="10" sizes="xs:10px" />
 
@@ -76,5 +77,9 @@ const onLowQualityLoad = () => {
 
 .opacity-0 {
   opacity: 0;
+}
+
+img {
+  object-fit: contain;
 }
 </style>

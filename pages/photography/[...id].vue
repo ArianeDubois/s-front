@@ -19,7 +19,7 @@ const { data } = await useKql({
       select: {
         resized: {
           query: 'file.resize(2000)',
-          select: ['url'],
+          select: ['url', 'width', 'height', 'alt'],
         },
         width: true,
         height: true,
@@ -30,9 +30,11 @@ const { data } = await useKql({
     cover: {
       query: 'page.content.cover.toFile',
       select: {
+        width: true,
+        height: true,
         resized: {
           query: 'file.resize(2000)',
-          select: ['url'],
+          select: ['url', 'width', 'height', 'alt'],
         },
         alt: true,
       },
@@ -44,34 +46,77 @@ const page = data.value?.result
 setPage(page)
 const infos = ref(null);
 
+
+const loaded = ref(false);
+
+const onLoad = () => {
+  loaded.value = true;
+};
+
+
 onBeforeRouteLeave((to, from, next) => {
+  console.log('yoLeave')
+
   if (document.querySelector('.transition-clone')) {
     document.querySelectorAll('.transition-clone').forEach(el => {
       el.remove();
     })
-    next();
   }
+  next();
+
+})
+onBeforeRouteUpdate((to, from, next) => {
+  console.log('yo')
+
+  if (document.querySelector('.transition-nav-clone')) {
+    $gsap.to('.transition-clone', {
+      opacity: 0, duration: 0.5,
+      onComplete: document.querySelectorAll('.transition-nav-clone').forEach(el => {
+        console.log(el)
+        el.remove();
+      }),
+    });
+  }
+
+  if (document.querySelector('.transition-clone')) {
+    document.querySelectorAll('.transition-clone').forEach(el => {
+      el.remove();
+    })
+  }
+  next();
 })
 
 const imageLoad = () => {
   $gsap.to('header', {
     opacity: 1,
   });
+
   if (document.querySelector('.transition-clone')) {
     $gsap.to('.transition-clone', {
       opacity: 0, duration: 0.5,
       onComplete: document.querySelectorAll('.transition-clone').forEach(el => {
+        console.log(el)
         el.remove();
       }),
     });
   }
+  if (document.querySelector('.transition-nav-clone')) {
+    $gsap.to('.transition-clone', {
+      opacity: 0, duration: 0.5,
+      onComplete: document.querySelectorAll('.transition-nav-clone').forEach(el => {
+        console.log(el)
+        el.remove();
+      }),
+    });
+  }
+
   if (document.querySelector('.low-quality')) {
     $gsap.set('.low-quality', { opacity: 0 });
   }
 }
 onMounted(() => {
-  window.scrollTo(0, 0);
-  $gsap.to('.infos', { opacity: 1, duration: 0.5 });
+  $gsap.to(infos.value, { opacity: 1, duration: 0.25 });
+
 
 });
 </script>,
@@ -81,12 +126,14 @@ onMounted(() => {
   <article>
     <div class="grid">
       <ul class="album-gallery">
-        <li v-for="(image, index) in page?.gallery ?? []" :key="index">
-          <figure>
-            <NuxtImg v-if="index === 0" @load="imageLoad()" loading="eager" :src="image.url" :alt="image.alt"
-              width="auto" height="auto" quality="80" format="webp" sizes="xs:1080px" />
-            <NuxtImg v-else loading="lazy" :src="image.url" :alt="image.alt" width="auto" height="auto" quality="80"
-              format="webp" sizes="xs:1080px" />
+        <li v-for="(image, index) in page?.gallery ?? []" :key="index" :class="index === 0 ? 'cover' : 'images'">
+          <figure v-if="index === 0">
+            <NuxtImg @load="imageLoad()" loading="eager" :src="image.url" :alt="image.alt" width="auto" height="auto"
+              quality="80" format="webp" sizes="xs:1080px" />
+          </figure>
+
+          <figure class="lazy-wrapper" v-else :style="`width: 100%; position: relative;   overflow: hidden;`">
+            <ElementLazyImage :src="image.url" :lowQualitySrc="image.url" :alt="image.alt" :sizes="'xs:1200px'" />
           </figure>
         </li>
       </ul>
@@ -129,6 +176,13 @@ onMounted(() => {
   gap: 30px;
 }
 
+.album-gallery li {
+  width: 100%;
+  max-height: 100vh;
+  object-fit: contain;
+  position: relative;
+}
+
 .infos {
   position: fixed;
   display: flex;
@@ -141,11 +195,13 @@ onMounted(() => {
   right: 0;
   opacity: 0;
   z-index: 30;
-  mix-blend-mode: difference
+  mix-blend-mode: difference;
+  position: sticky;
+
 }
 
 .infos .icon {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .infos .value {
@@ -180,6 +236,9 @@ img {
   height: 100%;
   width: 100%;
   object-fit: contain;
+}
 
+.is-transitionning .images {
+  display: none;
 }
 </style>

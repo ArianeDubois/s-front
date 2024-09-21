@@ -6,6 +6,7 @@ const { data } = await useKql({
   select: {
     id: true,
     title: true,
+    tags: true,
     intendedTemplate: true,
     subheadline: true,
     children: {
@@ -18,6 +19,8 @@ const { data } = await useKql({
           select: {
             url: true,
             alt: true,
+            height: true,
+            width: true,
           },
         },
         image: {
@@ -109,13 +112,14 @@ onBeforeRouteLeave((to, from, next) => {
     const thumb = projects.value.querySelector(`[data-slug="${to.params['id'][0]}"]:not(.clone)`);
     const thumbBCR = thumb.getBoundingClientRect();
     const imgbBCR = thumb.querySelector('img').getBoundingClientRect();
-    // nextImageUrl.value = thumb.querySelector('img').src;
-
     // Cachez tous les autres projets sauf celui cliqué
     const otherProjects = projects.value.querySelectorAll('.project');
+
+
+
     otherProjects.forEach(project => {
       if (project !== thumb.closest('.project')) {
-        $gsap.to(project, { opacity: 0, duration: 0.5 });
+        $gsap.to(project, { opacity: 0, duration: 0.15 });
       }
     });
 
@@ -126,38 +130,53 @@ onBeforeRouteLeave((to, from, next) => {
 
     const scaledWidth = thumbBCR.width * scale;
     const scaledHeight = thumbBCR.height * scale;
-    const x = (window.innerWidth / 2) - 10 - (imgbBCR.left + (imgbBCR.width / 2));
+    const x = (window.innerWidth / 2) - (imgbBCR.left + (imgbBCR.width / 2));
     const y = (window.innerHeight / 2) - (imgbBCR.top + (imgbBCR.height / 2));
     $gsap.to('.index', {
       opacity: 0
     })
 
-    if (!clonedImage.value) {
-      clonedImage.value = thumb.querySelector('img').cloneNode(true);
-      clonedImage.value.classList.add('transition-clone')
-      document.body.appendChild(clonedImage.value);
+    clonedImage.value = thumb.querySelector('img').cloneNode(true);
+    clonedImage.value.classList.add('transition-clone')
+    document.body.appendChild(clonedImage.value);
 
-      $gsap.set(clonedImage.value, {
-        position: 'absolute',
-        top: imgbBCR.top + window.scrollY,
-        left: imgbBCR.left + window.scrollX,
-        width: imgbBCR.width,
-        height: imgbBCR.height,
-        zIndex: 10,
-      });
-    }
 
-    $gsap.to(clonedImage.value, {
-      duration: 1,
+    $gsap.set(clonedImage.value, {
+      position: 'absolute',
+      top: imgbBCR.top + window.scrollY,
+      left: imgbBCR.left,
+      width: imgbBCR.width,
+      height: imgbBCR.height,
+      zIndex: 10,
+    });
+
+    var tl = $gsap.timeline({ delay: 0.25 })
+
+    $gsap.set(thumb.querySelector('img'), {
+      opacity: 0,
+      delay: 0.25,
+    })
+
+    tl.to(clonedImage.value, {
+      // duration: 0.7,
+      duration: 0.7,
       x: x,
       y: y,
       scale: scale,
       ease: 'power2.inOut',
+
       onComplete: () => {
+        window.scrollTo(0, 0);
+
+        $gsap.set(clonedImage.value, {
+          top: imgbBCR.top
+        })
         next();
       },
     });
-
+    // $gsap.set(thumb.querySelector('img'), {
+    //   opacity: 0,
+    // })
     // $gsap.to(thumb.querySelector('img'), {
     //   duration: 1,
     //   x: x,
@@ -183,8 +202,9 @@ onBeforeRouteLeave((to, from, next) => {
           <NuxtLink :to="`/${project.id}`">
             <figure
               :style="`width: 100%; position: relative;padding-top: ${project?.image?.height / project?.image?.width * 100}%`">
-              <ElementLazyImage :src="project?.image?.url ?? project?.images?.[0]?.url"
-                :lowQualitySrc="project?.image?.url" :alt="project?.cover?.alt ?? project?.images?.[0]?.alt" />
+              <ElementLazyImage :src="project?.cover?.url ?? project?.images?.[0].url"
+                :lowQualitySrc="project?.image?.url" :alt="project?.cover?.alt ?? project?.images?.[0]?.alt"
+                :sizes="'xs:600px'" />
               <!-- <NuxtImg loading="lazy" :src="project?.image?.url ?? project?.images?.[0]?.url"
                 :alt="project?.cover?.alt ?? project?.images?.[0]?.alt" width="auto" height="auto" quality="80"
                 format="webp" sizes="xs:600px" /> -->
@@ -244,7 +264,6 @@ figure {
 .caption {
   opacity: 0;
   position: absolute;
-  inset: 0;
   top: 5px;
   left: 5px;
   width: 100%;
