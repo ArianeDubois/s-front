@@ -51,15 +51,18 @@ const { data: carrouselData, error: carrouselError } = await useKql({
 });
 
 const carrouselImages = carrouselData.value?.result || [];
-
 totalImages.value = carrouselImages.length;
 
 const setSecondSwiper = (right) => {
   swiperRight.value = right;
+  swiperLeft.value.slideTo(0, 0, false); // Force le premier slide actif sans animation
+
 };
 
 const setFirstSwiper = (left) => {
   swiperLeft.value = left;
+  swiperLeft.value.slideTo(0, 0, false); // Force le premier slide actif sans animation
+
 };
 
 const slidePrev = (swiper) => {
@@ -74,65 +77,37 @@ const slideNext = (swiper) => {
 
 const loadImageLeft = () => {
   imageLoadedCountLeft.value++;
-  console.log(
-    `Image loaded: ${imageLoadedCountLeft.value}/${totalImages.value}`
-  );
+  // if (allImagesLoadedLeft.value) {
+  //   // Forcer le reflow pour s'assurer que les styles sont appliqués
+  //   document.body.offsetHeight;
+  //   swiperLeft.value.update();
+  // }
 };
 
 const loadImageRight = () => {
   imageLoadedCountRight.value++;
-  console.log(
-    `Image loaded: ${imageLoadedCountRight.value}/${totalImages.value}`
-  );
+  // if (allImagesLoadedRight.value) {
+  //   // Forcer le reflow pour s'assurer que les styles sont appliqués
+  //   document.body.offsetHeight;
+  //   swiperRight.value.update();
+  // }
 };
 
-// Function to preload an image
-const preloadImage = (slide) => {
-  const img = slide.querySelector('img');
-  if (img && !img.complete) {
-    const src = img.getAttribute('src');
-    const newImg = new Image();
-    newImg.src = src;
-    newImg.onload = () => {
-      console.log(`Image preloaded: ${src}`);
-    };
-  }
-};
-
-// Function called before the transition starts
 const beforeTransition = (swiper) => {
-  const nextIndex = swiper.activeIndex;
-  const nextSlide = swiper.slides[nextIndex];
-
-  // Preload the next image
-  preloadImage(nextSlide);
-
-  // Set initial GSAP state for the next image
-  const img = nextSlide.querySelector('img');
-  if (img) {
-    $gsap.set(img, { scale: 0, opacity: 0 });
-  }
 };
 
-// Function called after the transition ends
 const slideChangeTransitionEnd = (swiper) => {
-  const activeSlide = swiper.slides[swiper.activeIndex];
-
-  // Animate the image in the active slide
-  const img = activeSlide.querySelector('img');
-  if (img) {
-    $gsap.to(img, {
-      scale: 1,
-      opacity: 1,
-      duration: 0.5,
-    });
-  }
 };
+
+const slideChange = (swiper) => {
+};
+
 
 onMounted(() => {
   document.querySelectorAll('.swiper-pagination-fraction').forEach((el) => {
     el.style.mixBlendMode = 'difference';
   });
+
   const customCursor = document.getElementById('custom-cursor');
   const showCursor = () => {
     customCursor.style.opacity = 1;
@@ -141,6 +116,7 @@ onMounted(() => {
   const hideCursor = () => {
     customCursor.style.opacity = 0;
   };
+
   const handleMouseMove = (e) => {
     customCursor.style.left = `${e.clientX}px`;
     customCursor.style.top = `${e.clientY}px`;
@@ -150,40 +126,18 @@ onMounted(() => {
   document.addEventListener('mouseenter', showCursor);
   document.addEventListener('mouseleave', hideCursor);
 
-  if (allImagesLoadedRight.value && allImagesLoadedLeft.value) {
-    // Initialize animations on the initial active slides
-    console.log('left')
-
-    const activeSlideLeft =
-      swiperLeft.value.slides[swiperLeft.value.activeIndex];
-    const imgLeft = activeSlideLeft.querySelector('img');
-    if (imgLeft) {
-      $gsap.set(imgLeft, { scale: 0, opacity: 0 });
-      $gsap.to(imgLeft, { scale: 1, opacity: 1, duration: 0.5 });
-    }
-
-    const activeSlideRight =
-      console.log('right')
-    swiperRight.value.slides[swiperRight.value.activeIndex];
-    const imgRight = activeSlideRight.querySelector('img');
-    if (imgRight) {
-      $gsap.set(imgRight, { scale: 0, opacity: 0 });
-      $gsap.to(imgRight, { scale: 1, opacity: 1, duration: 0.5 });
-    }
-  }
+  // watch([allImagesLoadedLeft, allImagesLoadedRight], (loaded) => {
+  //   if (allImagesLoadedLeft.value && allImagesLoadedRight.value) {
+  //     setTimeout(() => {
+  //       swiperLeft.value.update();
+  //       swiperRight.value.update();
+  //     }, 100); // Ajoute un léger délai pour s'assurer que les images sont chargées
+  //   }
+  // });
 });
 </script>
 <template>
   <div>
-    <!-- Loading Screen -->
-    <div v-if="!allImagesLoadedRight || !allImagesLoadedLeft" class="loading-screen">
-      <div class="piment-el">
-        <ElementIconPiment />
-      </div>
-      <p>Simon Guittet</p>
-    </div>
-
-    <!-- Swiper Carousels -->
     <div v-if="carrouselImages" class="swipers">
       <div class="swiper-left">
         <Swiper :pagination="{ type: 'fraction' }" :initialSlide="1" :speed="400"
@@ -192,21 +146,17 @@ onMounted(() => {
             prev: { scale: 3 },
             next: { scale: 0 },
           }" :loop="true" :space-between="0" :style="`cursor: url(${leftArrowSvg}), auto`" @click="slidePrev"
-          @swiper="setFirstSwiper" @slideChange="slideChange" @slideChangeTransitionStart="beforeTransition"
-          @slideChangeTransitionEnd="slideChangeTransitionEnd">
+          @swiper="setFirstSwiper">
           <SwiperSlide v-for="(image, index) in carrouselImages" :key="index">
             <figure>
               <NuxtImg :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto" quality="80"
                 format="webp" sizes="xs:1800px" @load="loadImageLeft" />
+              />
             </figure>
             <figcaption class="caption">
               <div v-if="image.project">Projet: {{ image.project }}</div>
-
               <div v-if="image.client">Client: {{ image.client }}</div>
-
-              <div v-if="image.photographer">
-                Crédit photo: {{ image.photographer }}
-              </div>
+              <div v-if="image.photographer">Crédit photo: {{ image.photographer }}</div>
             </figcaption>
           </SwiperSlide>
         </Swiper>
@@ -220,7 +170,7 @@ onMounted(() => {
             next: { scale: 0 },
           }" :loop="true" :initialSlide="1" :space-between="0" @swiper="setSecondSwiper" @slideChange="slideChange"
           :style="`cursor: url(${rightArrowSvg}), auto`" @click="slideNext"
-          @slideChangeTransitionStart="beforeTransition" @slideChangeTransitionEnd="slideChangeTransitionEnd">
+          @slideChangeTransitionEnd="slideChangeTransitionEnd">
           <SwiperSlide v-for="(image, index) in carrouselImages" :key="index">
             <figure>
               <div class="swiper-zoom-container" data-swiper-zoom="5">
@@ -230,12 +180,8 @@ onMounted(() => {
             </figure>
             <figcaption class="caption">
               <div v-if="image.project">Projet: {{ image.project }}</div>
-
               <div v-if="image.client">Client: {{ image.client }}</div>
-
-              <div v-if="image.photographer">
-                Crédit photo: {{ image.photographer }}
-              </div>
+              <div v-if="image.photographer">Crédit photo: {{ image.photographer }}</div>
             </figcaption>
           </SwiperSlide>
         </Swiper>
@@ -244,6 +190,7 @@ onMounted(() => {
     <div id="custom-cursor" class="custom-cursor">Next</div>
   </div>
 </template>
+
 
 
 <style scoped>
@@ -299,12 +246,13 @@ body.infos-is-active .swiper-right .swiper-slide-active figure:after {
   width: 100%;
   height: 100%;
   margin-left: 10px;
+
   color: black;
   z-index: 100;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  font-size: var(--font-base);
+  /* font-size: var(--font-base); */
   text-transform: uppercase;
 }
 
@@ -352,11 +300,13 @@ body.infos-is-active .caption {
   height: 100%;
 }
 
+
 .swiper-right img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
+  /* object-fit: cover; */
 }
 
 .swiper-left img {
@@ -365,6 +315,7 @@ body.infos-is-active .caption {
   height: 100%;
   object-fit: cover;
 }
+
 
 .swiper-right .swiper-slide-active figure {
   transform: scale(0.5);

@@ -64,7 +64,7 @@ onBeforeRouteUpdate((to, from, next) => {
       opacity: 0,
     });
 
-    var tl = $gsap.timeline({ duration: 0.8 })
+    var tl = $gsap.timeline({ duration: 0.4 })
 
     tl.to(navEl.value.parentElement, {
       scale: 0.5,
@@ -116,7 +116,7 @@ onBeforeRouteUpdate((to, from, next) => {
       transformOrigin: 'center center'
     });
 
-    var tl = $gsap.timeline({ duration: 0.8 })
+    var tl = $gsap.timeline({ duration: 0.4 })
 
     tl.to(navEl.value.parentElement, {
       scale: 0.5,
