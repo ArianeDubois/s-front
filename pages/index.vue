@@ -4,12 +4,14 @@ const { $gsap } = useNuxtApp();
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
 
-import { EffectCreative, Navigation, Pagination } from 'swiper/modules';
+import { EffectCreative, Navigation, Pagination, Autoplay } from 'swiper/modules';
 
 const swiperLeft = ref(null);
 const swiperRight = ref(null);
 const leftArrowSvg = ref(null);
 const rightArrowSvg = ref(null);
+const loading = ref(true); // Indique si l'écran de chargement doit être affiché
+const autoplayComplete = ref(false);
 
 // Variables for managing loading
 const imageLoadedCountLeft = ref(0);
@@ -36,7 +38,7 @@ const { data } = await useKql({
 const page = data.value?.result;
 setPage(page);
 
-const { data: carrouselData, error: carrouselError } = await useKql({
+const { data: carrouselData } = await useKql({
   query: 'page("home").files',
   select: {
     filename: true,
@@ -55,14 +57,32 @@ totalImages.value = carrouselImages.length;
 
 const setSecondSwiper = (right) => {
   swiperRight.value = right;
-  swiperLeft.value.slideTo(0, 0, false); // Force le premier slide actif sans animation
+  if (swiperRight.value.autoplay) {
+    swiperRight.value.autoplay.start(); // Lancer l'autoplay si défini
+  }
 
+  // Masquer l'écran de chargement après 5 secondes (une fois les swipers parcourus)
+  setTimeout(() => {
+    loading.value = false;
+    if (swiperRight.value.autoplay) {
+      swiperRight.value.autoplay.stop(); // Arrêter l'autoplay
+    }
+  }, 3000); // Réglé à 5 secondes pour laisser le temps de parcourir le Swiper
 };
 
 const setFirstSwiper = (left) => {
   swiperLeft.value = left;
-  swiperLeft.value.slideTo(0, 0, false); // Force le premier slide actif sans animation
+  if (swiperLeft.value.autoplay) {
+    swiperLeft.value.autoplay.start(); // Lancer l'autoplay si défini
+  }
 
+  // Masquer l'écran de chargement après 5 secondes (une fois les swipers parcourus)
+  setTimeout(() => {
+    loading.value = false;
+    if (swiperLeft.value.autoplay) {
+      swiperLeft.value.autoplay.stop(); // Arrêter l'autoplay
+    }
+  }, 3000); // Réglé à 5 secondes pour laisser le temps de parcourir le Swiper
 };
 
 const slidePrev = (swiper) => {
@@ -77,31 +97,30 @@ const slideNext = (swiper) => {
 
 const loadImageLeft = () => {
   imageLoadedCountLeft.value++;
-  // if (allImagesLoadedLeft.value) {
-  //   // Forcer le reflow pour s'assurer que les styles sont appliqués
-  //   document.body.offsetHeight;
-  //   swiperLeft.value.update();
-  // }
 };
 
 const loadImageRight = () => {
   imageLoadedCountRight.value++;
-  // if (allImagesLoadedRight.value) {
-  //   // Forcer le reflow pour s'assurer que les styles sont appliqués
-  //   document.body.offsetHeight;
-  //   swiperRight.value.update();
-  // }
 };
 
 const beforeTransition = (swiper) => {
+  // Forcer le reflow avant une transition pour éviter les conflits de styles
+  document.body.offsetHeight;
 };
 
 const slideChangeTransitionEnd = (swiper) => {
+  // Forcer une mise à jour du DOM après la fin de la transition
+  swiper.wrapperEl.offsetHeight;
+  animateSlides(swiper);
 };
 
 const slideChange = (swiper) => {
+  animateSlides(swiper);
 };
 
+function animateSlides(swiper) {
+  // Ton animation ici
+}
 
 onMounted(() => {
   document.querySelectorAll('.swiper-pagination-fraction').forEach((el) => {
@@ -136,22 +155,29 @@ onMounted(() => {
   // });
 });
 </script>
+
 <template>
   <div>
+    <div v-if="loading" class="loading-screen">
+      <div class="icon-piment">
+        <ElementIconPiment />
+      </div>
+      <p>Simon Guittet</p>
+    </div>
+
     <div v-if="carrouselImages" class="swipers">
       <div class="swiper-left">
-        <Swiper :pagination="{ type: 'fraction' }" :initialSlide="1" :speed="400"
-          :modules="[EffectCreative, Pagination]" effect="creative" :creative-effect="{
+        <Swiper :pagination="{ type: 'fraction' }" :initialSlide="0" :speed="400"
+          :modules="[EffectCreative, Pagination, Autoplay]" effect="creative" :creative-effect="{
             limitProgress: 1,
             prev: { scale: 3 },
             next: { scale: 0 },
-          }" :loop="true" :space-between="0" :style="`cursor: url(${leftArrowSvg}), auto`" @click="slidePrev"
-          @swiper="setFirstSwiper">
-          <SwiperSlide v-for="(image, index) in carrouselImages" :key="index">
+          }" :loop="true" :space-between="0" :autoplay="{ delay: 1, disableOnInteraction: false }"
+          :style="`cursor: url(${leftArrowSvg}), auto`" @click="slidePrev" @swiper="setFirstSwiper">
+          <SwiperSlide v-for="(image, index) in carrouselImages" :key="index" :loadPrevNextAmount="2">
             <figure>
               <NuxtImg :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto" quality="80"
                 format="webp" sizes="xs:1800px" @load="loadImageLeft" />
-              />
             </figure>
             <figcaption class="caption">
               <div v-if="image.project">Projet: {{ image.project }}</div>
@@ -163,12 +189,13 @@ onMounted(() => {
       </div>
 
       <div class="swiper-right">
-        <Swiper :pagination="{ type: 'fraction' }" :speed="400" :modules="[EffectCreative, Pagination]"
+        <Swiper :pagination="{ type: 'fraction' }" :speed="400" :modules="[EffectCreative, Pagination, Autoplay]"
           effect="creative" :creative-effect="{
             limitProgress: 1,
             prev: { scale: 3 },
             next: { scale: 0 },
-          }" :loop="true" :initialSlide="1" :space-between="0" @swiper="setSecondSwiper" @slideChange="slideChange"
+          }" :loop="true" :initialSlide="0" :space-between="0" :autoplay="{ delay: 1, disableOnInteraction: false }"
+          :loadPrevNext="true" :loadPrevNextAmount="2" @swiper="setSecondSwiper" @slideChange="slideChange"
           :style="`cursor: url(${rightArrowSvg}), auto`" @click="slideNext"
           @slideChangeTransitionEnd="slideChangeTransitionEnd">
           <SwiperSlide v-for="(image, index) in carrouselImages" :key="index">
@@ -187,6 +214,7 @@ onMounted(() => {
         </Swiper>
       </div>
     </div>
+
     <div id="custom-cursor" class="custom-cursor">Next</div>
   </div>
 </template>
@@ -197,7 +225,7 @@ onMounted(() => {
 /* .swiper {
   cursor: none !important;
 }
-
+*/
 .custom-cursor {
   mix-blend-mode: difference;
   position: absolute;
@@ -208,7 +236,7 @@ onMounted(() => {
   transform: translate(-50%, -50%);
   transition: opacity 0.2s ease;
   opacity: 0;
-} */
+}
 
 .loading-screen {
   position: fixed;
@@ -221,6 +249,7 @@ onMounted(() => {
   z-index: 1000;
   font-size: 1.5rem;
   font-weight: bold;
+  opacity: 0.5;
 }
 
 
@@ -320,6 +349,12 @@ body.infos-is-active .caption {
 .swiper-right .swiper-slide-active figure {
   transform: scale(0.5);
 }
+
+.swiper-right .swiper-slide-prev figure {
+  transition: all 0.2s;
+}
+
+/* c'est la slide prev qui est la suivante et qu'il faut cahrger */
 
 .swiper-left .swiper-slide-active figure {
   transform: scale(1.1);
