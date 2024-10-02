@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { $gsap } = useNuxtApp();
+const img = useImage()
 
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
@@ -10,10 +11,9 @@ const swiperLeft = ref(null);
 const swiperRight = ref(null);
 const leftArrowSvg = ref(null);
 const rightArrowSvg = ref(null);
-const loading = ref(true); // Indique si l'écran de chargement doit être affiché
+const loading = ref(true);
 const autoplayComplete = ref(false);
 
-// Variables for managing loading
 const imageLoadedCountLeft = ref(0);
 const imageLoadedCountRight = ref(0);
 const totalImages = ref(0);
@@ -39,7 +39,7 @@ const page = data.value?.result;
 setPage(page);
 
 const { data: carrouselData } = await useKql({
-  query: 'page("home").files',
+  query: 'page("home").files.sortBy("sort", "asc")',
   select: {
     filename: true,
     url: true,
@@ -55,34 +55,18 @@ const { data: carrouselData } = await useKql({
 const carrouselImages = carrouselData.value?.result || [];
 totalImages.value = carrouselImages.length;
 
+
+// const loadingPercentage = computed(() => {
+//   const totalLoaded = imageLoadedCountLeft.value + imageLoadedCountRight.value;
+//   return Math.round((totalLoaded / (totalImages.value * 2)) * 100);
+// });
+
 const setSecondSwiper = (right) => {
   swiperRight.value = right;
-  if (swiperRight.value.autoplay) {
-    swiperRight.value.autoplay.start(); // Lancer l'autoplay si défini
-  }
-
-  // Masquer l'écran de chargement après 5 secondes (une fois les swipers parcourus)
-  setTimeout(() => {
-    loading.value = false;
-    if (swiperRight.value.autoplay) {
-      swiperRight.value.autoplay.stop(); // Arrêter l'autoplay
-    }
-  }, 3000); // Réglé à 5 secondes pour laisser le temps de parcourir le Swiper
 };
 
 const setFirstSwiper = (left) => {
   swiperLeft.value = left;
-  if (swiperLeft.value.autoplay) {
-    swiperLeft.value.autoplay.start(); // Lancer l'autoplay si défini
-  }
-
-  // Masquer l'écran de chargement après 5 secondes (une fois les swipers parcourus)
-  setTimeout(() => {
-    loading.value = false;
-    if (swiperLeft.value.autoplay) {
-      swiperLeft.value.autoplay.stop(); // Arrêter l'autoplay
-    }
-  }, 3000); // Réglé à 5 secondes pour laisser le temps de parcourir le Swiper
 };
 
 const slidePrev = (swiper) => {
@@ -97,87 +81,89 @@ const slideNext = (swiper) => {
 
 const loadImageLeft = () => {
   imageLoadedCountLeft.value++;
+
 };
 
 const loadImageRight = () => {
   imageLoadedCountRight.value++;
+
 };
 
-const beforeTransition = (swiper) => {
-  // Forcer le reflow avant une transition pour éviter les conflits de styles
-  document.body.offsetHeight;
+const animateLoadingImages = () => {
+  const images = document.querySelectorAll('.loading-screen .loading-images img');
+
+  $gsap.to(images, {
+    scale: 1,
+    stagger: 0.5,
+    // repeat: -1,
+    ease: 'power2.out',
+    onComplete: () => {
+      loading.value = false;
+    }
+  });
 };
 
-const slideChangeTransitionEnd = (swiper) => {
-  // Forcer une mise à jour du DOM après la fin de la transition
-  swiper.wrapperEl.offsetHeight;
-  animateSlides(swiper);
+const colors = ["#FCDA52", "#8c03fc", "#FE6000", "#9F91C7", "#5EC76A", "#8ae6f2", "#ff0a64"];
+const getRandomColor = () => {
+  const randomIndex = Math.floor(Math.random() * colors.length);
+  return colors[randomIndex];
 };
 
-const slideChange = (swiper) => {
-  animateSlides(swiper);
-};
 
-function animateSlides(swiper) {
-  // Ton animation ici
-}
+const applyRandomColorToHeader = () => {
+  const header = document.querySelector('header');
+  const randomColor = getRandomColor();
+  if (header) {
+    header.style.color = randomColor;
+    header.style.transition = "color 0.5s ease";
+  }
+
+  document.querySelectorAll('.swiper-pagination').forEach(el => {
+    el.style.color = randomColor;
+    el.style.transition = "color 0.5s ease";
+  })
+};
 
 onMounted(() => {
-  document.querySelectorAll('.swiper-pagination-fraction').forEach((el) => {
-    el.style.mixBlendMode = 'difference';
-  });
+  applyRandomColorToHeader();
+  animateLoadingImages();
 
-  const customCursor = document.getElementById('custom-cursor');
-  const showCursor = () => {
-    customCursor.style.opacity = 1;
-  };
-
-  const hideCursor = () => {
-    customCursor.style.opacity = 0;
-  };
-
-  const handleMouseMove = (e) => {
-    customCursor.style.left = `${e.clientX}px`;
-    customCursor.style.top = `${e.clientY}px`;
-  };
-
-  document.addEventListener('mousemove', handleMouseMove);
-  document.addEventListener('mouseenter', showCursor);
-  document.addEventListener('mouseleave', hideCursor);
-
-  // watch([allImagesLoadedLeft, allImagesLoadedRight], (loaded) => {
-  //   if (allImagesLoadedLeft.value && allImagesLoadedRight.value) {
-  //     setTimeout(() => {
-  //       swiperLeft.value.update();
-  //       swiperRight.value.update();
-  //     }, 100); // Ajoute un léger délai pour s'assurer que les images sont chargées
-  //   }
-  // });
 });
 </script>
 
 <template>
   <div>
-    <div v-if="loading" class="loading-screen">
-      <div class="icon-piment">
-        <ElementIconPiment />
+    <div v-if="loadissng" class="loading-screen">
+      <div class="loading-images">
+        <figure v-for="(image, index) in carrouselImages" :key="index">
+          <NuxtImg :preload="true" :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto"
+            quality="80" format="webp" sizes="300px" @load="loadImageRight" />
+        </figure>
       </div>
-      <p>Simon Guittet</p>
+
+
+      <!-- <div class="icon-piment">
+        <ElementIconPiment />
+      </div> -->
+      <!-- Affichage du pourcentage de chargement -->
+      <p>Loading...</p>
+
     </div>
 
     <div v-if="carrouselImages" class="swipers">
       <div class="swiper-left">
-        <Swiper :pagination="{ type: 'fraction' }" :initialSlide="0" :speed="400"
+        <Swiper :pagination="{ type: 'fraction' }" :initialSlide="1" :speed="400"
           :modules="[EffectCreative, Pagination, Autoplay]" effect="creative" :creative-effect="{
             limitProgress: 1,
-            prev: { scale: 3 },
+            prev: { scale: 2 },
             next: { scale: 0 },
-          }" :loop="true" :space-between="0" :autoplay="{ delay: 1, disableOnInteraction: false }"
-          :style="`cursor: url(${leftArrowSvg}), auto`" @click="slidePrev" @swiper="setFirstSwiper">
+          }" :loop="true" :space-between="0" :style="`cursor: url(${leftArrowSvg}), auto`" @click="slidePrev"
+          @swiper="setFirstSwiper">
           <SwiperSlide v-for="(image, index) in carrouselImages" :key="index" :loadPrevNextAmount="2">
             <figure>
-              <NuxtImg :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto" quality="80"
-                format="webp" sizes="xs:1800px" @load="loadImageLeft" />
+              <NuxtImg fit="cover" :placeholder="img(image.src, { h: 10, f: 'webp', blur: 2, q: 50 })" :preload="true"
+                :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto" quality="80"
+                format="webp" densities="x1 x2" sizes="100vw sm:100vw" @load="loadImageLeft" />
             </figure>
             <figcaption class="caption">
               <div v-if="image.project">Projet: {{ image.project }}</div>
@@ -190,19 +176,33 @@ onMounted(() => {
 
       <div class="swiper-right">
         <Swiper :pagination="{ type: 'fraction' }" :speed="400" :modules="[EffectCreative, Pagination, Autoplay]"
-          effect="creative" :creative-effect="{
+          effect="creative" :breakpoints="{
+            '720': {
+              creativeEffect: {
+                limitProgress: 1,
+                prev: { scale: 3 },
+                next: { scale: 0 },
+              },
+              '1024': {
+                creativeEffect: {
+                  limitProgress: 1,
+                  prev: { scale: 2 },
+                  next: { scale: 0 },
+                }
+              }
+            },
+          }" :creative-effect="{
             limitProgress: 1,
-            prev: { scale: 3 },
+            prev: { scale: 4 },
             next: { scale: 0 },
-          }" :loop="true" :initialSlide="0" :space-between="0" :autoplay="{ delay: 1, disableOnInteraction: false }"
-          :loadPrevNext="true" :loadPrevNextAmount="2" @swiper="setSecondSwiper" @slideChange="slideChange"
-          :style="`cursor: url(${rightArrowSvg}), auto`" @click="slideNext"
-          @slideChangeTransitionEnd="slideChangeTransitionEnd">
+          }" :loop="true" :initialSlide="1" :space-between="0" :loadPrevNext="true" :loadPrevNextAmount="2"
+          @swiper="setSecondSwiper" :style="`cursor: url(${rightArrowSvg}), auto;`" @click="slideNext">
           <SwiperSlide v-for="(image, index) in carrouselImages" :key="index">
             <figure>
               <div class="swiper-zoom-container" data-swiper-zoom="5">
-                <NuxtImg :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto"
-                  quality="80" format="webp" sizes="xs:1800px" @load="loadImageRight" />
+                <NuxtImg fit="cover" :placeholder="img(image.src, { h: 10, f: 'webp', blur: 2, q: 50 })" :preload="true"
+                  :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto" quality="80"
+                  format="webp" densities="x1 x2" sizes="100vw sm:100vw" @load="loadImageRight" />
               </div>
             </figure>
             <figcaption class="caption">
@@ -247,12 +247,38 @@ onMounted(() => {
   align-items: center;
   background-color: rgba(255, 255, 255);
   z-index: 1000;
-  font-size: 1.5rem;
+  font-family: "Maison Neue";
+  font-size: var(--font-base);
+  text-transform: uppercase;
   font-weight: bold;
-  opacity: 0.5;
 }
 
+.loading-screen .loading-images {
+  position: relative;
+  width: 10%;
+  min-height: 300px;
+  margin-bottom: 5px;
+}
 
+.loading-screen .loading-images figure {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  margin-bottom: 5px;
+}
+
+.loading-screen .loading-images img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transform: scale(0);
+}
+
+.loading-screen .loading-images figure:first img {
+  transform: scale(1);
+}
 
 body.infos-is-active .swiper-slide-active figure:after {
   content: '';
@@ -281,7 +307,6 @@ body.infos-is-active .swiper-right .swiper-slide-active figure:after {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* font-size: var(--font-base); */
   text-transform: uppercase;
 }
 
@@ -309,6 +334,19 @@ body.infos-is-active .caption {
   height: 100%;
   overflow: hidden;
 }
+
+
+
+@media screen and (max-width: 720px) {
+  .swiper-left {
+    display: none;
+  }
+
+  .swiper-right {
+    width: 100%;
+  }
+}
+
 
 .swiper-left .swiper,
 .swiper-right .swiper {
@@ -350,13 +388,11 @@ body.infos-is-active .caption {
   transform: scale(0.5);
 }
 
-.swiper-right .swiper-slide-prev figure {
+.swiper-right figure {
   transition: all 0.2s;
 }
 
-/* c'est la slide prev qui est la suivante et qu'il faut cahrger */
-
 .swiper-left .swiper-slide-active figure {
-  transform: scale(1.1);
+  transform: scale(1);
 }
 </style>

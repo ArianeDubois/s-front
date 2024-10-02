@@ -64,7 +64,7 @@ onBeforeRouteUpdate((to, from, next) => {
       opacity: 0,
     });
 
-    var tl = $gsap.timeline({ duration: 0.4 })
+    var tl = $gsap.timeline({ duration: 0.2 })
 
     tl.to(navEl.value.parentElement, {
       scale: 0.5,

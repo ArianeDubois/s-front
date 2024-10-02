@@ -10,9 +10,9 @@ export default defineNuxtConfig({
   //   },
   // ],
 
-  app: {
-    pageTransition: { name: 'zoom' },
-  },
+  // app: {
+  //   pageTransition: { name: 'zoom' },
+  // },
 
   image: {
     domains: ['http://s-back.test'],
@@ -44,7 +44,6 @@ export default defineNuxtConfig({
   kql: {
     auth: 'bearer',
     prefetch: {
-      // Currently only used to infer the type of the `site` query
       kirbySite: siteQuery,
     },
   },

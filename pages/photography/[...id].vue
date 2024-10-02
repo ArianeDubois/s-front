@@ -11,6 +11,7 @@ const { data } = await useKql({
     client: true,
     credit: true,
     tags: true,
+    color: true,
     year: true,
     intendedTemplate: true,
     subheadline: true,
@@ -79,14 +80,13 @@ const pageIndex = children.findIndex(({ id }) => id === page?.id);
 
 const infos = ref(null);
 const loaded = ref(false);
+const lazyImage = ref(null);
 
 const onLoad = () => {
-  loaded.value = true;
+  // loaded.value = true;
 };
 
 onBeforeRouteLeave((to, from, next) => {
-  console.log('yoLeave');
-
   if (document.querySelector('.transition-clone')) {
     document.querySelectorAll('.transition-clone').forEach(el => el.remove());
   }
@@ -94,8 +94,6 @@ onBeforeRouteLeave((to, from, next) => {
 });
 
 onBeforeRouteUpdate((to, from, next) => {
-  console.log('yo');
-
   if (document.querySelector('.transition-nav-clone')) {
     $gsap.to('.transition-clone', {
       opacity: 0,
@@ -132,30 +130,47 @@ const imageLoad = () => {
   }
 
   if (document.querySelector('.low-quality')) {
-    $gsap.set('.low-quality', { opacity: 0 });
+    $gsap.set('.low-quality', { objectFit: 'contain' });
   }
 };
 
-// Animation à l'affichage de la page
 onMounted(() => {
   $gsap.to(infos.value, { opacity: 1, duration: 0.25 });
+  if (page?.color) {
+    $gsap.to('header', { color: page.color, duration: 0.5 });
+  }
+
+  nextTick(() => {
+    lazyImage.value.forEach(img => {
+      $gsap.to(img.$el.children[0], {
+        opacity: 1,
+        scrollTrigger: {
+          trigger: img.$el,
+          start: "top center",
+          end: "+=100",
+          scrub: true
+        },
+        ease: 'power2.out',
+      });
+    });
+  })
 });
 </script>
 
 <template>
-
-
   <article>
     <div class="grid">
       <ul class="album-gallery">
         <li v-for="(image, index) in page?.gallery ?? []" :key="index" :class="index === 0 ? 'cover' : 'images'">
-          <figure v-if="index === 0">
+          <figure v-if="index === 0" class="cover">
             <NuxtImg @load="imageLoad()" loading="eager" :src="image.url" :alt="image.alt" width="auto" height="auto"
               quality="80" format="webp" sizes="xs:1080px" />
           </figure>
 
-          <figure class="lazy-wrapper" v-else :style="`width: 100%; position: relative;   overflow: hidden;`">
-            <ElementLazyImage :src="image.url" :lowQualitySrc="image.url" :alt="image.alt" :sizes="'xs:1200px'" />
+          <figure class="lazy-wrapper" v-else
+            :style="`height: 100vh; width: auto; position: relative; overflow: hidden; aspect-ratio: ${image.width} / ${image.height}; display: flex; justify-content: center; align-items: center; margin:auto`">
+            <ElementLazyImage ref="lazyImage" :src="image.url" :lowQualitySrc="image.url" :alt="image.alt"
+              :sizes="'xs:1200px'" />
           </figure>
         </li>
       </ul>
@@ -163,20 +178,17 @@ onMounted(() => {
 
 
     <div ref="infos" class="infos">
-      <NuxtLink v-if="children[pageIndex - 1]" :to="'/' + children[pageIndex - 1].id" class="button-nav">PREV</NuxtLink>
+      <NuxtLink :style="`color: ${page.color}; pointer-events:${children[pageIndex - 1] ? 'auto' : 'none'}`"
+        :to="'/' + (children[pageIndex - 1] ? children[pageIndex - 1].id : children[children.length - 1].id)"
+        class="button-nav">PREV</NuxtLink>
 
-      <ul class="content">
+      <ul class="content" :style="`color: ${page.color}`">
         <li class="icon">
           <ElementIconPiment />
         </li>
         <li class="value title">
           <div>{{ page.title }}</div>
           <div class="key">Titre <br />du projet</div>
-        </li>
-
-        <li v-if="page.client" class="value">
-          <div>{{ page.client }}</div>
-          <div class="key">Client</div>
         </li>
 
         <li v-if="page.credit" class="value">
@@ -188,8 +200,14 @@ onMounted(() => {
           <div>{{ page.year }}</div>
           <div class="key">Année <br />de réalisation</div>
         </li>
+
+        <li v-if="page.client" class="value">
+          <div>{{ page.client }}</div>
+          <div class="key">Client</div>
+        </li>
       </ul>
-      <NuxtLink v-if="children[pageIndex + 1]" :to="'/' + children[pageIndex + 1].id" class="button-nav">Next</NuxtLink>
+      <NuxtLink :style="`color: ${page.color}; opacity:${children[pageIndex + 1] ? 1 : 0} `"
+        :to="'/' + (children[pageIndex + 1] ? children[pageIndex + 1].id : '0')" class="button-nav">Next</NuxtLink>
     </div>
     <LazyAppNavProject />
   </article>
@@ -198,9 +216,9 @@ onMounted(() => {
 <style scoped>
 .album-gallery {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
-  margin: 0 100px;
+  justify-content: space-between;
   gap: 30px;
 }
 
@@ -209,19 +227,83 @@ onMounted(() => {
   max-height: 100vh;
   object-fit: contain;
   position: relative;
+
 }
+
+li.images {
+  object-fit: contain;
+}
+
+/* .album-gallery li:not(.cover):nth-child(2) {
+  width: 60%;
+}
+
+
+.album-gallery li:not(.cover):nth-child(3) {
+  width: 20%;
+}
+
+.album-gallery li:not(.cover):nth-child(4) {
+  width: 100%;
+}
+
+.album-gallery li:not(.cover):nth-child(5) {
+  width: 20%;
+}
+
+.album-gallery li:not(.cover):nth-child(6) {
+  width: 60%;
+}
+
+.album-gallery li:not(.cover):nth-child(7) {
+  width: 20%;
+}
+
+.album-gallery li:not(.cover):nth-child(6) {
+  width: 60%;
+}
+
+.album-gallery li:not(.cover):nth-child(9) {
+  width: 33.33%;
+}
+
+.album-gallery li:not(.cover):nth-child(10) {
+  width: 33.33%;
+}
+
+
+.album-gallery li:not(.cover):nth-child(11) {
+  width: 33.33%;
+}
+
+.album-gallery li:not(.cover):nth-child(12) {
+  width: 20%;
+}
+
+.album-gallery li:not(.cover):nth-child(13) {
+  width: 20%;
+}
+
+.album-gallery li:not(.cover):nth-child(14) {
+  width: 60%;
+}
+
+.album-gallery li.cover {
+  width: 100%;
+  margin: 0 100px;
+
+} */
 
 .infos {
   position: fixed;
   display: flex;
   justify-content: space-between;
   align-items: end;
-  width: 100%;
   flex-wrap: wrap;
   gap: 0 30px;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 5px;
+  right: 5px;
   opacity: 0;
   z-index: 30;
   /* transform: translateY(50%); */
@@ -240,37 +322,50 @@ onMounted(() => {
 }
 
 .infos .icon {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  /* color: #8c03fc; */
+
 }
 
 .infos .value,
 .button-nav {
+  /* color: #8c03fc; */
+
   font-family: "Maison Neue";
-  font-size: 50px;
+  font-size: 80px;
+  line-height: 1;
   text-transform: uppercase;
   display: flex;
-  align-items: start;
+  align-items: flex-start;
+  /* flex-direction: row-reverse; */
   gap: 5px;
 }
 
 .infos .value .key {
-  margin-top: 12px;
+  margin-top: 10px;
   font-family: "Maison Neue";
   font-size: 0.9rem;
-  line-height: 1.3;
+  line-height: 1.1;
+  /* text-align: right; */
 }
 
 .infos .title {
-  width: 100%;
-  justify-content: center;
-  margin: auto;
+  /* width: 100%; */
+  /* justify-content: center;
+  margin: auto; */
 }
 
 figure {
   height: 100vh;
   position: relative;
   width: auto;
+  overflow: hidden;
+
 }
+
 
 img {
   height: 100%;
