@@ -9,12 +9,14 @@
   /* src: url('../ESNeinTRIAL-Extrabold.ttf') format('truetype'); */
   /* src: url('../Mango Grotesque-VF.ttf') format('truetype'); */
   /* src: url('../GreedCondensedTRIAL-SemiBold.otf') format('opentype'); */
-  src: url('../BebasNeue-Regular.ttf') format('truetype');
+  src:
+    url('../BebasNeue-Regular.woff2') format('woff2'),
+    url('../BebasNeue-Regular.woff') format('woff');
   /* font-weight: 500; */
   font-style: normal;
   font-display: swap;
 }
-@font-face {
+/* @font-face {
   font-family: 'Gaya';
   src: url('../Gaya-Demo-Regular.ttf') format('truetype');
   font-style: normal;
@@ -31,7 +33,7 @@
   src: url('../GreedCondensedTRIAL-SemiBold.otf') format('opentype');
   font-style: normal;
   font-display: swap;
-}
+} */
 
 /* @font-face {
   font-family: 'Maison Neue';
