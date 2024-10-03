@@ -37,7 +37,6 @@ const { data } = await useKql({
 
 const page = data.value?.result;
 setPage(page);
-
 const { data: carrouselData } = await useKql({
   query: 'page("home").files.sortBy("sort", "asc")',
   select: {
@@ -92,9 +91,9 @@ const loadImageRight = () => {
 const animateLoadingImages = () => {
   const images = document.querySelectorAll('.loading-screen .loading-images img');
 
-  $gsap.to(images, {
+  $gsap.to(Array.from(images).slice(4), {
     scale: 1,
-    stagger: 0.5,
+    stagger: 0.15,
     // repeat: -1,
     ease: 'power2.out',
     onComplete: () => {
@@ -117,6 +116,8 @@ const applyRandomColorToHeader = () => {
     header.style.color = randomColor;
     header.style.transition = "color 0.5s ease";
   }
+  document.querySelector('.icon-piment').style.color = randomColor;
+  document.querySelector('.icon-piment').style.transition = "color 0.5s ease";
 
   document.querySelectorAll('.swiper-pagination').forEach(el => {
     el.style.color = randomColor;
@@ -133,20 +134,20 @@ onMounted(() => {
 
 <template>
   <div>
-    <div v-if="loadissng" class="loading-screen">
+    <div v-if="loading" class="loading-screen">
       <div class="loading-images">
         <figure v-for="(image, index) in carrouselImages" :key="index">
           <NuxtImg :preload="true" :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto"
             quality="80" format="webp" sizes="300px" @load="loadImageRight" />
         </figure>
+
+        <div class="icon-piment">
+          <ElementIconPiment />
+        </div>
       </div>
 
 
-      <!-- <div class="icon-piment">
-        <ElementIconPiment />
-      </div> -->
       <!-- Affichage du pourcentage de chargement -->
-      <p>Loading...</p>
 
     </div>
 
@@ -258,6 +259,15 @@ onMounted(() => {
   width: 10%;
   min-height: 300px;
   margin-bottom: 5px;
+}
+
+.icon-piment {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -10;
+  mix-blend-mode: difference;
 }
 
 .loading-screen .loading-images figure {

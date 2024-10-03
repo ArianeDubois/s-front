@@ -1,4 +1,5 @@
 import { siteQuery } from './queries'
+import process from 'node:process'
 
 export default defineNuxtConfig({
   modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image'],
@@ -15,7 +16,8 @@ export default defineNuxtConfig({
   // },
 
   image: {
-    domains: ['http://s-back.test'],
+    // domains: ['http://s-back.test'],
+    domains: ['http://preprod.arianedubois.fr/s-back'],
 
     screens: {
       xs: 320,
@@ -37,7 +39,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      siteUrl: 'http://s-back.test',
+      siteUrl: process.env.KIRBY_BASE_URL,
     },
   },
 

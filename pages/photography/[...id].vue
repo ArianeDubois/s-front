@@ -326,6 +326,7 @@ li.images {
   width: 100%;
   display: flex;
   justify-content: center;
+  transform: scale(0.9);
   /* color: #8c03fc; */
 
 }
