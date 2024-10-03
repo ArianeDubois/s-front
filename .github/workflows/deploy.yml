@@ -23,8 +23,7 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: mkdir -p dist
-          pnpm run build
+        run: mkdir dist && pnpm run build
         env:
           NITRO_PRESET: cloudflare_pages
           KIRBY_BASE_URL: ${{ secrets.KIRBY_BASE_URL }}

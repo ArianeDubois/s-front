@@ -3,8 +3,6 @@ import process from 'node:process'
 
 export default defineNuxtConfig({
   modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image'],
-  target: 'static', // Génère un site statique
-  ssr: false,
   // ssr: true, // Activer SSR
   // target: 'server', // Utiliser un serveur pour le rendu
   // buildModules: [
@@ -19,8 +17,8 @@ export default defineNuxtConfig({
   // },
 
   image: {
-    // domains: ['http://s-back.test'],
-    domains: ['http://preprod.arianedubois.fr/s-back'],
+    domains: ['http://s-back.test'],
+    // domains: ['http://preprod.arianedubois.fr/s-back'],
 
     screens: {
       xs: 320,
