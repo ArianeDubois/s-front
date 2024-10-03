@@ -3,7 +3,8 @@ import process from 'node:process'
 
 export default defineNuxtConfig({
   modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image'],
-
+  // ssr: true, // Activer SSR
+  // target: 'server', // Utiliser un serveur pour le rendu
   // buildModules: [
   //   '@nuxt/image',
   //   {
