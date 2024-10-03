@@ -40,12 +40,17 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      siteUrl: process.env.KIRBY_BASE_URL,
+      siteUrl:
+        process.env.KIRBY_BASE_URL ||
+        'http://preprod.arianedubois.fr/s-back/public',
     },
   },
 
   kql: {
     auth: 'bearer',
+    baseURL:
+      process.env.KIRBY_BASE_URL ||
+      'http://preprod.arianedubois.fr/s-back/public',
     prefetch: {
       kirbySite: siteQuery,
     },
