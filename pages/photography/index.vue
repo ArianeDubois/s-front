@@ -186,6 +186,19 @@ const applyRandomColorToHeader = () => {
     header.style.transition = "color 0.5s ease";
   }
   const filters = document.querySelector('.filters');
+  const about = document.querySelector('.about-content');
+  const captions = document.querySelectorAll('figcaption');
+
+  if (captions) {
+    captions.forEach(caption => {
+      caption.style.color = randomColor + 'important !';
+      caption.style.transition = "color 0.5s ease";
+    })
+  }
+  if (about) {
+    about.style.color = randomColor;
+    about.style.transition = "color 0.5s ease";
+  }
 
   if (filters) {
     filters.style.color = randomColor;
@@ -209,7 +222,7 @@ onMounted(() => {
         duration: 0.3,
         scrollTrigger: {
           trigger: img.$el,
-          start: "top center",
+          start: "top 70%",
           toggleActions: "play none none none",
         },
         ease: "slow(0.7,0.7,false)",
@@ -368,7 +381,7 @@ onBeforeRouteLeave((to, from, next) => {
   text-transform: uppercase;
   mix-blend-mode: difference;
   z-index: 50;
-  top: -1px;
+  top: 2px;
   /* color: #8c03fc; */
 }
 
@@ -379,7 +392,7 @@ onBeforeRouteLeave((to, from, next) => {
 }
 
 .button-images-infos:before {
-  position: absolute;
+  position: fixed;
   transition: opacity 0.1s ease-in;
   left: -8px;
   top: -3px;
@@ -453,7 +466,6 @@ figure {
   top: 5px;
   left: 5px;
   width: 100%;
-  color: black;
   font-size: var(--font-base);
   text-transform: uppercase;
 }
@@ -481,26 +493,6 @@ body.infos-is-active li {
   transform: scale(0.7);
 }
 
-/* .clone figure {
-  height: 100%;
-  object-fit: cover;
-  padding-top: 0 !important;
-}
-
-.clone .lazy-image {
-  height: 100%;
-  width: 100%;
-  object-fit: cover !important;
-
-}
-
-.clone .lazy-image img {
-  height: 100%;
-  width: 100%;
-  object-fit: cover !important;
-
-} */
-
 .icon {
   position: absolute;
   top: -150%;
@@ -518,7 +510,7 @@ body.infos-is-active li {
   width: 100%;
   opacity: 0.8;
   mix-blend-mode: difference;
-  z-index: 100;
+  z-index: 90;
 
 }
 
@@ -545,51 +537,6 @@ body.infos-is-active li {
   cursor: pointer;
 
 }
-
-/* .filters li:nth-child(1) {
-  font-family: "Gaya";
-  font-size: 0.9em;
-}
-
-.filters li:nth-child(2) {
-  font-family: "Tobias";
-  font-size: 0.9em;
-}
-
-.filters li:nth-child(3) {
-  font-family: "Mango";
-  font-size: 1em;
-}
-
-.filters li:nth-child(4) {
-  font-family: "Gaya";
-  font-size: 0.9em;
-}
-
-.filters li:nth-child(5) {
-  font-family: "Tobias";
-  font-size: 0.9em;
-}
-
-.filters li:nth-child(6) {
-  font-family: "Mango";
-  font-size: 1em;
-}
-
-.filters li:nth-child(7) {
-  font-family: "Gaya";
-  font-size: 0.9em;
-}
-
-.filters li:nth-child(8) {
-  font-family: "Tobias";
-  font-size: 0.9em;
-}
-
-.filters li:nth-child(9) {
-  font-family: "Mango";
-  font-size: 1em;
-} */
 
 .filters li.active:before,
 .filters li.active:after {

@@ -1,3 +1,4 @@
+max-width: calc(100vw - 200px); */
 <script setup lang="ts">
 // import { projectsQuery } from '~/queries'
 const { $gsap, $ScrollTrigger } = useNuxtApp();
@@ -52,10 +53,11 @@ onBeforeRouteUpdate((to, from, next) => {
     const offsetX = (window.innerWidth - 100) * 0.5
 
 
-    cloneLeft.value = thumbImage.cloneNode(true);
-    cloneLeft.value.classList.add('transition-clone')
-    document.body.appendChild(cloneLeft.value);
+    // cloneLeft.value = thumbImage.cloneNode(true);
+    // cloneLeft.value.classList.add('transition-clone')
+    // document.body.appendChild(cloneLeft.value);
     navEl.value.parentElement.classList.add('is-transitionning')
+    document.body.style.scrollbarWidth = 'none'
 
     $gsap.to('header', {
       opacity: 0,
@@ -100,11 +102,13 @@ onBeforeRouteUpdate((to, from, next) => {
     const offsetX = (window.innerWidth + 100) * 0.5
 
 
-    cloneRight.value = thumbImage.cloneNode(true);
-    cloneRight.value.classList.add('transition-clone')
+    // cloneRight.value = thumbImage.cloneNode(true);
+    // cloneRight.value.classList.add('transition-clone')
 
-    document.body.appendChild(cloneRight.value);
+    // document.body.appendChild(cloneRight.value);
     navEl.value.parentElement.classList.add('is-transitionning')
+    document.body.style.scrollbarWidth = 'none'
+
     $gsap.to('.infos', {
       opacity: 0,
     });
@@ -178,11 +182,10 @@ body {
   position: absolute;
   inset: 0;
   opacity: 0;
-  max-height: 100vh;
   object-fit: contain;
   opacity: 0;
   z-index: 10;
   object-position: center;
-  margin: 0 100px;
+  margin: 0;
 }
 </style>

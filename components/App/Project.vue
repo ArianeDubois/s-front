@@ -32,6 +32,7 @@ const next = ref(null);
   top: 0;
   bottom: 0;
   height: 100vh;
+  /* max-height: 100vh;*/
   /* width: calc(100% - 200px); */
   width: 100%;
   margin: 0 100px;
@@ -56,22 +57,32 @@ const next = ref(null);
 }
 
 .project-excerpt__right:not(.transition-clone) img {
+  max-width: calc(100vw - 200px);
 
   object-position: center;
   /* transform: trans; */
 }
 
 .project-excerpt__left:not(.transition-clone) img {
+  max-width: calc(100vw - 200px);
+
   object-position: center;
+}
+
+figure {
+  display: flex;
+  justify-content: center;
 }
 
 figure,
 img {
   height: 100%;
   width: 100%;
+
+
   /* width: auto;
   max-width: calc(100vw - 100px); */
   object-fit: contain;
-  display: inline-block;
+  /* display: inline-block; */
 }
 </style>

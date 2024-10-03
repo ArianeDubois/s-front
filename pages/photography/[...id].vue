@@ -1,8 +1,7 @@
 <script setup lang="ts">
 const { $gsap } = useNuxtApp();
-const router = useRouter(); // Utilisation de useRouter pour la navigation
+const router = useRouter();
 
-// Récupération des données du projet actuel
 const { data } = await useKql({
   query: `page("${useRoute().path}")`,
   select: {
@@ -46,7 +45,6 @@ const { data } = await useKql({
 const page = data.value?.result;
 setPage(page);
 
-// Récupération des enfants (projets) de la page "photography"
 const { data: dataChildren } = await useKql({
   query: 'page("photography")',
   select: {
@@ -137,7 +135,9 @@ const imageLoad = () => {
 onMounted(() => {
   $gsap.to(infos.value, { opacity: 1, duration: 0.25 });
   if (page?.color) {
-    $gsap.to('header', { color: page.color, duration: 0.5 });
+    $gsap.set('.about-content .col', { color: page.color });
+    $gsap.set('header', { color: page.color });
+    $gsap.set('body', { color: page.color });
   }
 
   nextTick(() => {
@@ -168,7 +168,7 @@ onMounted(() => {
           </figure>
 
           <figure class="lazy-wrapper" v-else
-            :style="`height: 100vh; width: auto; position: relative; overflow: hidden; aspect-ratio: ${image.width} / ${image.height}; display: flex; justify-content: center; align-items: center; margin:auto`">
+            :style="`width: auto; position: relative; overflow: hidden; aspect-ratio: ${image.width} / ${image.height}; display: flex; justify-content: center; align-items: center; margin:auto`">
             <ElementLazyImage ref="lazyImage" :src="image.url" :lowQualitySrc="image.url" :alt="image.alt"
               :sizes="'xs:1200px'" />
           </figure>
@@ -215,6 +215,7 @@ onMounted(() => {
 
 <style scoped>
 .album-gallery {
+  margin: 0 100px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -233,66 +234,6 @@ onMounted(() => {
 li.images {
   object-fit: contain;
 }
-
-/* .album-gallery li:not(.cover):nth-child(2) {
-  width: 60%;
-}
-
-
-.album-gallery li:not(.cover):nth-child(3) {
-  width: 20%;
-}
-
-.album-gallery li:not(.cover):nth-child(4) {
-  width: 100%;
-}
-
-.album-gallery li:not(.cover):nth-child(5) {
-  width: 20%;
-}
-
-.album-gallery li:not(.cover):nth-child(6) {
-  width: 60%;
-}
-
-.album-gallery li:not(.cover):nth-child(7) {
-  width: 20%;
-}
-
-.album-gallery li:not(.cover):nth-child(6) {
-  width: 60%;
-}
-
-.album-gallery li:not(.cover):nth-child(9) {
-  width: 33.33%;
-}
-
-.album-gallery li:not(.cover):nth-child(10) {
-  width: 33.33%;
-}
-
-
-.album-gallery li:not(.cover):nth-child(11) {
-  width: 33.33%;
-}
-
-.album-gallery li:not(.cover):nth-child(12) {
-  width: 20%;
-}
-
-.album-gallery li:not(.cover):nth-child(13) {
-  width: 20%;
-}
-
-.album-gallery li:not(.cover):nth-child(14) {
-  width: 60%;
-}
-
-.album-gallery li.cover {
-  width: 100%;
-  margin: 0 100px;
-
-} */
 
 .infos {
   position: fixed;
@@ -336,12 +277,11 @@ li.images {
   /* color: #8c03fc; */
 
   font-family: "Maison Neue";
-  font-size: 80px;
+  font-size: 70px;
   line-height: 1;
   text-transform: uppercase;
   display: flex;
   align-items: flex-start;
-  /* flex-direction: row-reverse; */
   gap: 5px;
 }
 
@@ -350,7 +290,6 @@ li.images {
   font-family: "Maison Neue";
   font-size: 0.9rem;
   line-height: 1.1;
-  /* text-align: right; */
 }
 
 .infos .title {
@@ -360,13 +299,16 @@ li.images {
 }
 
 figure {
-  height: 100vh;
+  max-height: 100vh;
   position: relative;
-  width: auto;
   overflow: hidden;
 
 }
 
+.cover {
+  height: 100vh;
+  width: 100%;
+}
 
 img {
   height: 100%;

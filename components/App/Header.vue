@@ -4,6 +4,23 @@ import { ref, watch, onMounted } from 'vue';
 const route = useRoute();
 const site = useSite();
 
+
+const { data: aboutData } = await useKql({
+  query: 'page("about")',
+  select: {
+    title: true,
+    address: true,
+    email: true,
+    phone: true,
+    social: {
+      platform: true,
+      url: true,
+    },
+  },
+});
+
+const about = computed(() => aboutData?.value?.result);
+
 const listedChildren = computed(() =>
   (site.value?.children ?? []).filter((i) => i.isListed),
 );
@@ -39,17 +56,14 @@ const toggleAbout = () => {
     <div class="about-content">
       <div class="col">
         <p>Simon Guittet</p>
-        <div>
-          <p>Styliste Culinaire,</p>
-          <p>Set Designer</p>
-        </div>
+        <div v-html="about.address"></div>
       </div>
 
       <div class="col">
         <p>Contact</p>
         <div>
-          <p>simonguittet@mail.com</p>
-          <p>+ 33 6 73 09 71 01</p>
+          <div v-html="about.email"></div>
+          <div v-html="about.phone"></div>
         </div>
       </div>
 
@@ -69,7 +83,7 @@ const toggleAbout = () => {
   justify-content: center;
   gap: var(--padding-x);
   z-index: 50;
-  /* top: 1px; */
+  top: 2px;
   left: 0;
   right: 0;
   font-family: "Maison Neue";
@@ -77,7 +91,6 @@ const toggleAbout = () => {
   text-transform: uppercase;
   mix-blend-mode: difference;
   color: #8c03fc;
-
 }
 
 @media screen and (max-width: 720px) {
@@ -121,7 +134,6 @@ button {
 }
 
 .about-content {
-  color: black;
   font-size: var(--font-base);
   text-align: center;
   padding: 20px;
@@ -149,6 +161,7 @@ button {
   align-items: start;
   gap: 10px;
   text-align: left;
+  color: currentColor;
 }
 
 .col p {

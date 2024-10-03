@@ -325,8 +325,6 @@ body.infos-is-active .caption {
   opacity: 1;
 }
 
-
-
 .swiper-wrapper {
   align-items: center !important;
 }
