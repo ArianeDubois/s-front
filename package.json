@@ -5,7 +5,6 @@
   "packageManager": "pnpm@9.1.1",
   "scripts": {
     "dev": "nuxi dev",
-    "prebuild": "mkdir -p dist",
     "build": "nuxi build",
     "generate": "nuxi generate",
     "preview": "nuxi preview",
