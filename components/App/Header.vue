@@ -86,17 +86,19 @@ const toggleAbout = () => {
   top: 2px;
   left: 0;
   right: 0;
-  font-family: "Maison Neue";
+  font-family: "Bebas";
   font-size: var(--font-base);
   text-transform: uppercase;
   mix-blend-mode: difference;
-  color: #8c03fc;
+  /* color: #8c03fc; */
 }
 
 @media screen and (max-width: 720px) {
-  /* .header{
-    justify-content: flex-end
-  } */
+  .header {
+    justify-content: flex-end;
+    font-size: var(--font-base-xs);
+
+  }
 }
 
 .header .title {
@@ -128,9 +130,12 @@ button {
   justify-content: space-around;
   align-items: center;
   transition: opacity 0.3s ease;
+}
 
-  /* mix-blend-mode: difference; */
-
+@media screen and (max-width: 720px) {
+  .about-content {
+    font-size: var(--font-base-xs);
+  }
 }
 
 .about-content {
@@ -141,7 +146,7 @@ button {
   text-transform: uppercase;
   display: flex;
   justify-content: space-around;
-  /* gap: 60px; */
+
 }
 
 .about-overlay .is-active {
@@ -153,7 +158,6 @@ button {
   inset: 0;
   background-color: transparent;
   z-index: 30;
-  /* pointer-events: none; */
 }
 
 .col {

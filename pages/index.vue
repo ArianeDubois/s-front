@@ -231,7 +231,7 @@ onMounted(() => {
   mix-blend-mode: difference;
   position: absolute;
   pointer-events: none;
-  font-family: 'Maison Neue';
+  font-family: 'Bebas';
   font-size: var(--font-base);
   text-transform: uppercase;
   transform: translate(-50%, -50%);
@@ -248,10 +248,17 @@ onMounted(() => {
   align-items: center;
   background-color: rgba(255, 255, 255);
   z-index: 1000;
-  font-family: "Maison Neue";
+  font-family: "Bebas";
   font-size: var(--font-base);
   text-transform: uppercase;
   font-weight: bold;
+}
+
+
+@media screen and (max-width: 720px) {
+  .loading-screen {
+    font-size: var(--font-base-xs);
+  }
 }
 
 .loading-screen .loading-images {

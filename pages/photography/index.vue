@@ -42,7 +42,7 @@ const { data } = await useKql({
 const page = data.value?.result;
 setPage(page);
 
-const allTags = ref([]); // Stocker tous les tags uniques
+const allTags = ref([]);
 
 if (page.children) {
   page.children.forEach((child) => {
@@ -147,18 +147,6 @@ const filterProjectsByTag = (tag) => {
   }
 };
 
-
-// definePageMeta({
-//   pageTransition: {
-//     name: 'zoom',
-//     onEnter: (el, done) => {
-//     },
-//     onLeave(el, done) {
-//       done();
-//     },
-//   },
-// });
-
 const toggleImageInfos = () => {
   showImageInfos.value = !showImageInfos.value;
 };
@@ -247,8 +235,6 @@ onBeforeRouteLeave((to, from, next) => {
     const imgbBCR = thumb.querySelector('img').getBoundingClientRect();
     const otherProjects = projects.value.querySelectorAll('.project');
 
-
-
     otherProjects.forEach(project => {
       if (project !== thumb.closest('.project')) {
         $gsap.to(project, { opacity: 0, duration: 0.15 });
@@ -260,8 +246,6 @@ onBeforeRouteLeave((to, from, next) => {
     const scale = Math.min(scaleX, scaleY);
 
 
-    const scaledWidth = thumbBCR.width * scale;
-    const scaledHeight = thumbBCR.height * scale;
     const x = (window.innerWidth / 2) - (imgbBCR.left + (imgbBCR.width / 2));
     const y = (window.innerHeight / 2) - (imgbBCR.top + (imgbBCR.height / 2));
     $gsap.to('.index', {
@@ -291,7 +275,7 @@ onBeforeRouteLeave((to, from, next) => {
 
     tl.to(clonedImage.value, {
       // duration: 0.7,
-      duration: 0.7,
+      duration: 3,
       x: x,
       y: y,
       scale: scale,
@@ -376,15 +360,26 @@ onBeforeRouteLeave((to, from, next) => {
   position: fixed;
   right: 5px;
   text-transform: uppercase;
-  font-family: "Maison Neue";
+  font-family: "Bebas";
   font-size: var(--font-base);
   text-transform: uppercase;
   mix-blend-mode: difference;
   z-index: 50;
   top: 2px;
-  /* color: #8c03fc; */
 }
 
+
+@media screen and (max-width: 720px) {
+  .button-images-infos {
+    font-size: var(--font-base-xs);
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .button-images-infos {
+    display: none;
+  }
+}
 
 .button-images-infos:hover:before,
 .button-images-infos:hover:after {
@@ -419,7 +414,7 @@ onBeforeRouteLeave((to, from, next) => {
 
 .page {
   overflow: hidden;
-  font-family: 'Maison Neue';
+  font-family: 'Bebas';
   margin-bottom: 20px
 }
 
@@ -436,8 +431,8 @@ onBeforeRouteLeave((to, from, next) => {
 
 @media screen and (max-width: 720px) {
   .projects {
-    grid-template-columns: 1fr 1fr 1fr;
     gap: var(--padding-x-sm);
+    margin: var(--padding-x) -30%;
 
   }
 }
@@ -448,6 +443,12 @@ onBeforeRouteLeave((to, from, next) => {
   transform-origin: center;
   font-size: var(--font-base);
   transition: transform 0.2s;
+}
+
+@media screen and (max-width: 720px) {
+  .project {
+    font-size: var(--font-base-xs);
+  }
 }
 
 figure {
@@ -470,6 +471,11 @@ figure {
   text-transform: uppercase;
 }
 
+@media screen and (max-width: 720px) {
+  .caption {
+    font-size: var(--font-base-xs);
+  }
+}
 
 body.infos-is-active .caption {
   opacity: 1;
@@ -504,7 +510,7 @@ body.infos-is-active li {
   position: relative;
   display: flex;
   position: fixed;
-  bottom: 7px;
+  bottom: 15px;
   left: 5px;
   border-radius: 5px;
   width: 100%;
@@ -520,22 +526,36 @@ body.infos-is-active li {
   padding: 0;
   margin: 0;
   display: flex;
-  gap: var(--padding-x);
+  gap: 0 var(--padding-x);
   justify-content: space-between;
   width: 100%;
   margin: auto;
   /* gap: 60px; */
+  flex-wrap: wrap;
   z-index: 80;
   transform: translateY(50%);
-  font-family: "Maison Neue";
+  font-family: "Bebas";
   font-size: var(--font-base);
   text-transform: uppercase;
 }
 
-.filters li {
-  margin-bottom: 10px;
-  cursor: pointer;
 
+@media screen and (max-width: 720px) {
+  .filters ul {
+    font-size: var(--font-base-xs);
+    width: auto;
+  }
+
+  .filters {
+    width: auto;
+    padding-right: 5px;
+    bottom: 10px;
+
+  }
+}
+
+.filters li {
+  cursor: pointer;
 }
 
 .filters li.active:before,

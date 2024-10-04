@@ -276,7 +276,7 @@ li.images {
 .button-nav {
   /* color: #8c03fc; */
 
-  font-family: "Maison Neue";
+  font-family: "Bebas";
   font-size: 70px;
   line-height: 1;
   text-transform: uppercase;
@@ -287,7 +287,7 @@ li.images {
 
 .infos .value .key {
   margin-top: 10px;
-  font-family: "Maison Neue";
+  font-family: "Bebas";
   font-size: 0.9rem;
   line-height: 1.1;
 }

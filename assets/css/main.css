@@ -1,5 +1,5 @@
 @font-face {
-  font-family: 'Maison Neue';
+  font-family: 'Bebas';
   /* src: url('../Gaya-Demo-Regular.ttf') format('truetype'); */
   /* src: url('../PPEditorialOld-Regular.otf') format('opentype'); */
   /* src: url('../PPEditorialOld-Ultralight.otf') format('opentype'); */
@@ -73,7 +73,8 @@
   --color-code-purple: #b294bb;
 
   --font-base: 1.5rem;
-  --font-family-sans: 'Maison Neue', Helvetica, Arial, sans-serif,
+  --font-base-xs: 1.2rem;
+  --font-family-sans: 'Bebas', Helvetica, Arial, sans-serif,
     --font-family-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo,
     Courier, monospace;
 }
@@ -89,7 +90,7 @@ img {
 body {
   padding: var(--padding);
   margin: 0 auto;
-  font-family: 'Maison Neue';
+  font-family: 'Bebas';
   font-size: var(--font-base);
 }
 
