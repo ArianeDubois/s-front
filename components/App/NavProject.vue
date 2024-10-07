@@ -53,9 +53,9 @@ onBeforeRouteUpdate((to, from, next) => {
     const offsetX = (window.innerWidth - 100) * 0.5
 
 
-    // cloneLeft.value = thumbImage.cloneNode(true);
-    // cloneLeft.value.classList.add('transition-clone')
-    // document.body.appendChild(cloneLeft.value);
+    cloneLeft.value = thumbImage.cloneNode(true);
+    cloneLeft.value.classList.add('transition-clone')
+    document.body.appendChild(cloneLeft.value);
     navEl.value.parentElement.classList.add('is-transitionning')
     document.body.style.scrollbarWidth = 'none'
 
@@ -102,10 +102,10 @@ onBeforeRouteUpdate((to, from, next) => {
     const offsetX = (window.innerWidth + 100) * 0.5
 
 
-    // cloneRight.value = thumbImage.cloneNode(true);
-    // cloneRight.value.classList.add('transition-clone')
+    cloneRight.value = thumbImage.cloneNode(true);
+    cloneRight.value.classList.add('transition-clone')
 
-    // document.body.appendChild(cloneRight.value);
+    document.body.appendChild(cloneRight.value);
     navEl.value.parentElement.classList.add('is-transitionning')
     document.body.style.scrollbarWidth = 'none'
 

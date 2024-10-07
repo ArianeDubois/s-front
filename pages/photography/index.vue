@@ -203,42 +203,64 @@ const applyRandomColorToHeader = () => {
 onMounted(() => {
   onEnter.value = true;
   applyRandomColorToHeader();
+  let mm = $gsap.matchMedia();
+
   nextTick(() => {
-    lazyImage.value.forEach(img => {
-      $gsap.to(img.$el.children[0], {
-        opacity: 1,
-        duration: 0.3,
-        scrollTrigger: {
-          trigger: img.$el,
-          start: "top 70%",
-          toggleActions: "play none none none",
-        },
-        ease: "slow(0.7,0.7,false)",
+    mm.add("(min-width: 1024px)", () => {
+      lazyImage.value.forEach(img => {
+        $gsap.to(img.$el.children[0], {
+          opacity: 1,
+          duration: 0.3,
+          ease: "slow(0.7,0.7,false)",
+        });
       });
-    });
+      lazyImage.value.forEach(img => {
+        $gsap.to(img.$el.children[0], {
+          opacity: 1,
+          duration: 0.3,
+          scrollTrigger: {
+            trigger: img.$el,
+            start: "top 70%",
+            toggleActions: "play none none none",
+          },
+          ease: "slow(0.7,0.7,false)",
+        });
+      });
+    })
   })
-  // if (showImageInfos.value) {
-  //   document.querySelector('body')?.classList.add('infos-is-active');
-  // }
 });
 
 
 onBeforeRouteLeave((to, from, next) => {
   projects.value.classList.add('pointer-event-none');
 
-  if (document.querySelector('.low-quality')) {
-    $gsap.set('.low-quality', { opacity: 0 });
-  }
   if (to.name.startsWith('photography')) {
-    const thumb = projects.value.querySelector(`[data-slug="${to.params['id'][0]}"]:not(.clone)`);
-    const thumbBCR = thumb.getBoundingClientRect();
-    const imgbBCR = thumb.querySelector('img').getBoundingClientRect();
+    const project = projects.value.querySelector(`[data-slug="${to.params['id'][0]}"]:not(.clone)`);
+    const imgbBCR = project.querySelector('img').getBoundingClientRect();
     const otherProjects = projects.value.querySelectorAll('.project');
+    clonedImage.value = project.querySelector('.high-quality').cloneNode(true);
+    clonedImage.value.classList.add('transition-clone')
+    document.body.appendChild(clonedImage.value);
 
-    otherProjects.forEach(project => {
-      if (project !== thumb.closest('.project')) {
-        $gsap.to(project, { opacity: 0, duration: 0.15 });
+    otherProjects.forEach(otherProject => {
+      if (otherProject !== project.closest('.project')) {
+        $gsap.to(otherProject, { opacity: 0, duration: 0.15 });
       }
+    });
+
+    if (project.querySelector('.low-quality')) {
+      $gsap.set('.low-quality', { opacity: 0 });
+      $gsap.set(project.querySelector('.high-quality'), { opacity: 1 });
+    }
+
+    $gsap.set(clonedImage.value, {
+      position: 'absolute',
+      top: imgbBCR.top + window.scrollY,
+      left: imgbBCR.left,
+      width: imgbBCR.width,
+      height: imgbBCR.height,
+      zIndex: 10,
+      opacity: 1,
     });
 
     const scaleX = (window.innerWidth - 200) / imgbBCR.width;
@@ -248,38 +270,24 @@ onBeforeRouteLeave((to, from, next) => {
 
     const x = (window.innerWidth / 2) - (imgbBCR.left + (imgbBCR.width / 2));
     const y = (window.innerHeight / 2) - (imgbBCR.top + (imgbBCR.height / 2));
-    $gsap.to('.index', {
-      opacity: 0
-    })
-
-    clonedImage.value = thumb.querySelector('img').cloneNode(true);
-    clonedImage.value.classList.add('transition-clone')
-    document.body.appendChild(clonedImage.value);
 
 
-    $gsap.set(clonedImage.value, {
-      position: 'absolute',
-      top: imgbBCR.top + window.scrollY,
-      left: imgbBCR.left,
-      width: imgbBCR.width,
-      height: imgbBCR.height,
-      zIndex: 10,
-    });
-
-    var tl = $gsap.timeline({ delay: 0.25 })
-
-    $gsap.set(thumb.querySelector('img'), {
-      opacity: 0,
-      delay: 0.25,
-    })
+    // var tl = $gsap.timeline({ delay: 0.25 })
+    var tl = $gsap.timeline()
 
     tl.to(clonedImage.value, {
-      // duration: 0.7,
-      duration: 3,
+      opacity: 1,
+    })
+    tl.to(project.querySelector('img:not(.transition-clone)'), {
+      opacity: 0,
+      // delay: 0.5
+    })
+    tl.to(clonedImage.value, {
+      duration: 1,
       x: x,
       y: y,
       scale: scale,
-      ease: 'power2.inOut',
+      ease: "slow(0.7,0.7,false)",
 
       onComplete: () => {
         window.scrollTo(0, 0);
@@ -290,19 +298,6 @@ onBeforeRouteLeave((to, from, next) => {
         next();
       },
     });
-    // $gsap.set(thumb.querySelector('img'), {
-    //   opacity: 0,
-    // })
-    // $gsap.to(thumb.querySelector('img'), {
-    //   duration: 1,
-    //   x: x,
-    //   y: y,
-    //   scale: scale,
-    //   ease: 'power2.inOut',
-    //   onComplete: () => {
-    //     next();
-    //   }
-    // });
   }
 });
 </script>

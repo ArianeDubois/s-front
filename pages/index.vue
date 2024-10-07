@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { $gsap } = useNuxtApp();
-const img = useImage()
+const img = useImage();
 
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
@@ -54,12 +54,6 @@ const { data: carrouselData } = await useKql({
 const carrouselImages = carrouselData.value?.result || [];
 totalImages.value = carrouselImages.length;
 
-
-// const loadingPercentage = computed(() => {
-//   const totalLoaded = imageLoadedCountLeft.value + imageLoadedCountRight.value;
-//   return Math.round((totalLoaded / (totalImages.value * 2)) * 100);
-// });
-
 const setSecondSwiper = (right) => {
   swiperRight.value = right;
 };
@@ -80,24 +74,45 @@ const slideNext = (swiper) => {
 
 const loadImageLeft = () => {
   imageLoadedCountLeft.value++;
-
 };
 
 const loadImageRight = () => {
   imageLoadedCountRight.value++;
+};
 
+// MOUSSE
+const animateMouseFollow = () => {
+  const images = Array.from(document.querySelectorAll('.loading-screen .loading-images img'));
+
+  document.addEventListener('mousemove', (event) => {
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+
+    images.forEach((image, index) => {
+      const staggerDelay = index * 0.1;
+      $gsap.to(image, {
+        x: mouseX / 2 + (index * 5),
+        y: mouseY / 2 + (index * 5),
+        delay: staggerDelay,
+        ease: 'power3.out',
+      });
+    });
+  });
 };
 
 const animateLoadingImages = () => {
   const images = document.querySelectorAll('.loading-screen .loading-images img');
 
-  $gsap.to(Array.from(images).slice(4), {
+  $gsap.to(Array.from(images), {
     scale: 1,
     stagger: 0.15,
-    // repeat: -1,
     ease: 'power2.out',
+    //OU AU CLIC
     onComplete: () => {
-      loading.value = false;
+      setTimeout(() => {
+        loading.value = false;
+      }, 3000);
+
     }
   });
 };
@@ -107,7 +122,6 @@ const getRandomColor = () => {
   const randomIndex = Math.floor(Math.random() * colors.length);
   return colors[randomIndex];
 };
-
 
 const applyRandomColorToHeader = () => {
   const header = document.querySelector('header');
@@ -122,13 +136,13 @@ const applyRandomColorToHeader = () => {
   document.querySelectorAll('.swiper-pagination').forEach(el => {
     el.style.color = randomColor;
     el.style.transition = "color 0.5s ease";
-  })
+  });
 };
 
 onMounted(() => {
   applyRandomColorToHeader();
   animateLoadingImages();
-
+  animateMouseFollow(); // Appel de la fonction de suivi de la souris
 });
 </script>
 

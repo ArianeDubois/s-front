@@ -135,7 +135,9 @@ const imageLoad = () => {
 onMounted(() => {
   $gsap.to(infos.value, { opacity: 1, duration: 0.25 });
   if (page?.color) {
-    $gsap.set('.about-content .col', { color: page.color });
+    if (document.querySelector('.about-content')) {
+      $gsap.set('.about-content .col', { color: page.color });
+    }
     $gsap.set('header', { color: page.color });
     $gsap.set('body', { color: page.color });
   }
@@ -262,47 +264,77 @@ li.images {
   mix-blend-mode: difference;
 }
 
+@media screen and (max-width: 720px) {
+  .infos {
+    width: 100%;
+  }
+
+  .content {
+    order: 1;
+    width: 100%;
+    flex-basis: 100%;
+  }
+
+  .button-nav:nth-child(1) {
+    order: 2;
+    flex: 1;
+  }
+
+  .button-nav:last-child {
+    order: 3;
+    flex: 1;
+    display: flex;
+    justify-content: flex-end
+  }
+}
+
 .infos .icon {
   margin-bottom: 10px;
   width: 100%;
   display: flex;
   justify-content: center;
   transform: scale(0.9);
-  /* color: #8c03fc; */
-
 }
+
+@media screen and (max-width: 720px) {
+
+  .infos .icon {
+    transform: scale(0.6);
+  }
+}
+
 
 .infos .value,
 .button-nav {
   /* color: #8c03fc; */
-
   font-family: "Bebas";
-  font-size: 70px;
-  line-height: 1;
+  font-size: var(--font-big);
+  line-height: 0.85;
   text-transform: uppercase;
   display: flex;
   align-items: flex-start;
   gap: 5px;
 }
 
-.infos .value .key {
-  margin-top: 10px;
-  font-family: "Bebas";
-  font-size: 0.9rem;
-  line-height: 1.1;
+@media screen and (max-width: 720px) {
+
+  .infos .value,
+  .button-nav {
+    font-size: var(--font-big-xs);
+  }
 }
 
-.infos .title {
-  /* width: 100%; */
-  /* justify-content: center;
-  margin: auto; */
+.infos .value .key {
+  font-family: "Bebas";
+  font-size: 0.25em;
+  line-height: 1;
 }
+
 
 figure {
   max-height: 100vh;
   position: relative;
   overflow: hidden;
-
 }
 
 .cover {
