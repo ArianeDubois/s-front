@@ -171,8 +171,8 @@ onMounted(() => {
 
           <figure class="lazy-wrapper" v-else
             :style="`width: auto; position: relative; overflow: hidden; aspect-ratio: ${image.width} / ${image.height}; display: flex; justify-content: center; align-items: center; margin:auto`">
-            <ElementLazyImage ref="lazyImage" :src="image.url" :lowQualitySrc="image.url" :alt="image.alt"
-              :sizes="'xs:1200px'" />
+            <ElementLazyImage ref="lazyImage" :is-loading="true" :src="image.url" :lowQualitySrc="image.url"
+              :alt="image.alt" :sizes="'xs:1200px'" />
           </figure>
         </li>
       </ul>
@@ -225,6 +225,13 @@ onMounted(() => {
   gap: 30px;
 }
 
+@media screen and (max-width: 720px) {
+  .album-gallery {
+    margin: 0 10px;
+
+  }
+}
+
 .album-gallery li {
   width: 100%;
   max-height: 100vh;
@@ -266,7 +273,7 @@ li.images {
 
 @media screen and (max-width: 720px) {
   .infos {
-    width: 100%;
+    width: auto;
   }
 
   .content {
@@ -296,14 +303,6 @@ li.images {
   transform: scale(0.9);
 }
 
-@media screen and (max-width: 720px) {
-
-  .infos .icon {
-    transform: scale(0.6);
-  }
-}
-
-
 .infos .value,
 .button-nav {
   /* color: #8c03fc; */
@@ -317,10 +316,37 @@ li.images {
 }
 
 @media screen and (max-width: 720px) {
+  .infos {
+    gap: 10px;
+  }
+
+  .infos .icon {
+    transform: scale(0.6) translateY(30px);
+  }
 
   .infos .value,
   .button-nav {
     font-size: var(--font-big-xs);
+  }
+
+  .infos .value,
+  .infos .value .key {
+    text-align: center;
+  }
+
+  .infos .value {
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+
+  .infos .value.title {
+    width: 100%;
+
+  }
+
+  .content {
+    gap: 10px 30px;
+    align-items: end;
   }
 }
 
@@ -328,6 +354,7 @@ li.images {
   font-family: "Bebas";
   font-size: 0.25em;
   line-height: 1;
+
 }
 
 

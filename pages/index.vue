@@ -82,7 +82,7 @@ const loadImageRight = () => {
 
 // MOUSSE
 const animateMouseFollow = () => {
-  const images = Array.from(document.querySelectorAll('.loading-screen .loading-images img'));
+  const images = Array.from(document.querySelectorAll('.loading-screen .loading-images img')).slice(0, 6);
 
   document.addEventListener('mousemove', (event) => {
     const mouseX = event.clientX;
@@ -91,7 +91,7 @@ const animateMouseFollow = () => {
     images.forEach((image, index) => {
       const staggerDelay = index * 0.1;
       $gsap.to(image, {
-        x: mouseX / 2 + (index * 5),
+        x: (mouseX - window.innerWidth / 2) * 0.5,
         y: mouseY / 2 + (index * 5),
         delay: staggerDelay,
         ease: 'power3.out',
@@ -101,9 +101,9 @@ const animateMouseFollow = () => {
 };
 
 const animateLoadingImages = () => {
-  const images = document.querySelectorAll('.loading-screen .loading-images img');
+  const images = Array.from(document.querySelectorAll('.loading-screen .loading-images img')).slice(0, 6);
 
-  $gsap.to(Array.from(images), {
+  $gsap.to(images, {
     scale: 1,
     stagger: 0.15,
     ease: 'power2.out',
@@ -138,19 +138,21 @@ const applyRandomColorToHeader = () => {
     el.style.transition = "color 0.5s ease";
   });
 };
-
+const onClick = () => {
+  loading.value = false;
+};
 onMounted(() => {
   applyRandomColorToHeader();
   animateLoadingImages();
-  animateMouseFollow(); // Appel de la fonction de suivi de la souris
+  animateMouseFollow();
 });
 </script>
 
 <template>
   <div>
-    <div v-if="loading" class="loading-screen">
+    <div v-if="loading" class="loading-screen" @click="onClick">
       <div class="loading-images">
-        <figure v-for="(image, index) in carrouselImages" :key="index">
+        <figure v-for="(image, index) in carrouselImages" :key="index" style="pointer-events: none;">
           <NuxtImg :preload="true" :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto"
             quality="80" format="webp" sizes="300px" @load="loadImageRight" />
         </figure>
@@ -159,10 +161,6 @@ onMounted(() => {
           <ElementIconPiment />
         </div>
       </div>
-
-
-      <!-- Affichage du pourcentage de chargement -->
-
     </div>
 
     <div v-if="carrouselImages" class="swipers">
@@ -180,6 +178,7 @@ onMounted(() => {
                 :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto" quality="80"
                 format="webp" densities="x1 x2" sizes="100vw sm:100vw" @load="loadImageLeft" />
             </figure>
+
             <figcaption class="caption">
               <div v-if="image.project">Projet: {{ image.project }}</div>
               <div v-if="image.client">Client: {{ image.client }}</div>

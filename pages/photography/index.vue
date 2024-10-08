@@ -84,6 +84,9 @@ const processProjects = () => {
       if (i == 0) {
         reorderedProjects.value.unshift({ ...oddProjects[0], isClone: true });
         oddProjects.shift();
+        if (children.length % 2 !== 0) {
+          oddProjects.push(children[0]);
+        }
       }
 
       reorderedProjects.value.push(children[i]);
@@ -93,13 +96,14 @@ const processProjects = () => {
           reorderedProjects.value.push({ ...evenProjects[evenIndex], isClone: true });
           evenIndex++;
         }
-        if (oddIndex < oddProjects.length) {
 
+        if (oddIndex < oddProjects.length) {
           reorderedProjects.value.push({ ...oddProjects[oddIndex], isClone: true });
           oddIndex++;
         }
       }
     }
+
   }
 };
 
@@ -116,6 +120,7 @@ const filterProjectsByTag = (tag) => {
       tl.to('.projects', { scale: 1, duration: 0.01 }, 0);
       tl.to(project, { scale: 1, opacity: 1, duration: 0.2 }, 0);
     });
+    $gsap.set('.page', { height: 'auto' });
 
   } else {
     selectedTag.value = tag;
@@ -203,32 +208,7 @@ const applyRandomColorToHeader = () => {
 onMounted(() => {
   onEnter.value = true;
   applyRandomColorToHeader();
-  let mm = $gsap.matchMedia();
-
-  nextTick(() => {
-    mm.add("(min-width: 1024px)", () => {
-      lazyImage.value.forEach(img => {
-        $gsap.to(img.$el.children[0], {
-          opacity: 1,
-          duration: 0.3,
-          ease: "slow(0.7,0.7,false)",
-        });
-      });
-      lazyImage.value.forEach(img => {
-        $gsap.to(img.$el.children[0], {
-          opacity: 1,
-          duration: 0.3,
-          scrollTrigger: {
-            trigger: img.$el,
-            start: "top 70%",
-            toggleActions: "play none none none",
-          },
-          ease: "slow(0.7,0.7,false)",
-        });
-      });
-    })
-  })
-});
+})
 
 
 onBeforeRouteLeave((to, from, next) => {
@@ -239,8 +219,31 @@ onBeforeRouteLeave((to, from, next) => {
     const imgbBCR = project.querySelector('img').getBoundingClientRect();
     const otherProjects = projects.value.querySelectorAll('.project');
     clonedImage.value = project.querySelector('.high-quality').cloneNode(true);
-    clonedImage.value.classList.add('transition-clone')
+    clonedImage.value.style.position = "absolute"
+    clonedImage.value.style.top = `${imgbBCR.top + window.scrollY}px`;
+    clonedImage.value.style.left = `${imgbBCR.left}px`;
+    clonedImage.value.style.width = `${imgbBCR.width}px`;
+    clonedImage.value.style.height = `${imgbBCR.height}px`;
+    clonedImage.value.style.zIndex = "10";
+    clonedImage.value.style.opacity = "1";
+    clonedImage.value.classList.add('transition-clone');
     document.body.appendChild(clonedImage.value);
+
+
+
+    // $gsap.set(clonedImage.value, {
+    //   position: 'absolute',
+    //   top:imgbBCR.top + window.scrollY
+    //   left: imgbBCR.left,
+    //   width: imgbBCR.width,
+    //   height: imgbBCR.height,
+    //   zIndex: 10,
+    //   opacity: 1,
+    //   onComplete: () => {
+    //     console.log(clonedImage.value)
+    //   }
+    // });
+
 
     otherProjects.forEach(otherProject => {
       if (otherProject !== project.closest('.project')) {
@@ -253,17 +256,12 @@ onBeforeRouteLeave((to, from, next) => {
       $gsap.set(project.querySelector('.high-quality'), { opacity: 1 });
     }
 
-    $gsap.set(clonedImage.value, {
-      position: 'absolute',
-      top: imgbBCR.top + window.scrollY,
-      left: imgbBCR.left,
-      width: imgbBCR.width,
-      height: imgbBCR.height,
-      zIndex: 10,
-      opacity: 1,
-    });
 
-    const scaleX = (window.innerWidth - 200) / imgbBCR.width;
+    const margin = window.innerWidth >= 720 ? 200 : 20;
+
+
+    const scaleX = (window.innerWidth - margin) / imgbBCR.width;
+
     const scaleY = window.innerHeight / imgbBCR.height;
     const scale = Math.min(scaleX, scaleY);
 
@@ -272,18 +270,18 @@ onBeforeRouteLeave((to, from, next) => {
     const y = (window.innerHeight / 2) - (imgbBCR.top + (imgbBCR.height / 2));
 
 
-    // var tl = $gsap.timeline({ delay: 0.25 })
     var tl = $gsap.timeline()
+    // var tl = $gsap.timeline({ delay: 0.25 })
 
-    tl.to(clonedImage.value, {
-      opacity: 1,
-    })
+    // tl.to(clonedImage.value, {
+    //   opacity: 1,
+    // })
     tl.to(project.querySelector('img:not(.transition-clone)'), {
       opacity: 0,
       // delay: 0.5
     })
     tl.to(clonedImage.value, {
-      duration: 1,
+      duration: 0.5,
       x: x,
       y: y,
       scale: scale,
@@ -297,7 +295,7 @@ onBeforeRouteLeave((to, from, next) => {
         })
         next();
       },
-    });
+    }, "-=80%");
   }
 });
 </script>
@@ -317,7 +315,7 @@ onBeforeRouteLeave((to, from, next) => {
         <NuxtLink :to="`/${project.id}`">
           <figure ref="imageWrapper"
             :style="`width: 100%; position: relative;padding-top: ${project?.image?.height / project?.image?.width * 100}%`">
-            <ElementLazyImage ref="lazyImage" :src="project?.cover?.url ?? project?.images?.[0].url"
+            <ElementLazyImage :is-loading="true" ref="lazyImage" :src="project?.cover?.url ?? project?.images?.[0].url"
               :lowQualitySrc="project?.cover?.url" :alt="project?.cover?.alt ?? project?.images?.[0]?.alt"
               :sizes="'xs:600px'" />
 
@@ -505,14 +503,14 @@ body.infos-is-active li {
   position: relative;
   display: flex;
   position: fixed;
-  bottom: 15px;
+  bottom: 0;
   left: 5px;
+  right: 5px;
   border-radius: 5px;
-  width: 100%;
   opacity: 0.8;
   mix-blend-mode: difference;
   z-index: 90;
-
+  transform: translateY(-50%);
 }
 
 .filters ul {
@@ -543,9 +541,6 @@ body.infos-is-active li {
 
   .filters {
     width: auto;
-    padding-right: 5px;
-    bottom: 10px;
-
   }
 }
 

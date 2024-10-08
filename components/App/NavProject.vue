@@ -47,7 +47,7 @@ const cloneRight = ref(null)
 onBeforeRouteUpdate((to, from, next) => {
   //Prev
 
-  if (pageIndex > 0 && to.fullPath == '/' + children[pageIndex - 1].id) {
+  if (pageIndex > 0 && to.fullPath == '/' + children[pageIndex - 1].id && window.innerWidth > 1023) {
     const thumbWidth = prevEl.value.$el.getBoundingClientRect().width;
     const thumbImage = prevEl.value.$el
     const offsetX = (window.innerWidth - 100) * 0.5
@@ -66,7 +66,7 @@ onBeforeRouteUpdate((to, from, next) => {
       opacity: 0,
     });
 
-    var tl = $gsap.timeline({ duration: 0.2 })
+    var tl = $gsap.timeline({ duration: 0.3 })
 
     tl.to(navEl.value.parentElement, {
       scale: 0.5,
@@ -96,7 +96,7 @@ onBeforeRouteUpdate((to, from, next) => {
   }
 
   //Next
-  else if (pageIndex >= 0 && to.fullPath == '/' + children[pageIndex + 1].id) {
+  else if (pageIndex >= 0 && to.fullPath == '/' + children[pageIndex + 1].id && window.innerWidth > 1023) {
     const thumbWidth = nextEl.value.$el.getBoundingClientRect().width;
     const thumbImage = nextEl.value.$el
     const offsetX = (window.innerWidth + 100) * 0.5
@@ -120,7 +120,7 @@ onBeforeRouteUpdate((to, from, next) => {
       transformOrigin: 'center center'
     });
 
-    var tl = $gsap.timeline({ duration: 0.4 })
+    var tl = $gsap.timeline({ duration: 0.3 })
 
     tl.to(navEl.value.parentElement, {
       scale: 0.5,

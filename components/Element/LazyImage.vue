@@ -7,29 +7,30 @@ const props = defineProps({
   src: String,
   lowQualitySrc: String,
   alt: String,
-  sizes: String
+  sizes: String,
+  isLoading: Boolean
 });
 
 const loaded = ref(false);
 const imageRef = ref(null);  // Référence pour la haute qualité
 const lowQualityImageRef = ref(null);  // Référence pour la basse qualité
 const onLoad = () => {
-  // loaded.value = true;
+  loaded.value = true;
 };
 
 const onLowQualityLoad = () => {
 };
 
 onMounted(() => {
-  // const animateLoadingImages = () => {
-  //   const images = document.querySelectorAll('.loading-screen .loading-images img');
-  //   $gsap.to(images, {
-  //     scale: 1,
-  //     stagger: 0.5,
-  //     // repeat: -1,
-  //     ease: 'power2.out',
-  //   });
-  // };
+  const animateLoadingImages = () => {
+    const images = document.querySelectorAll('.loading-screen .loading-images img');
+    $gsap.to(images, {
+      scale: 1,
+      stagger: 0.5,
+      // repeat: -1,
+      ease: 'power2.out',
+    });
+  };
 
 })
 </script>
@@ -37,7 +38,7 @@ onMounted(() => {
 <template>
   <div class="lazy-image">
     <NuxtImg ref="imageRef" :src="src" :alt="alt" class="high-quality" :class="{ 'loaded': loaded }" @load="onLoad"
-      format="webp" width="auto" height="auto" quality="80" :sizes="sizes" />
+      format="webp" width="auto" height="auto" quality="80" :sizes="sizes" :loading="isLoading ? 'lazy' : 'eager'" />
     <NuxtImg ref="lowQualityImageRef" :src="lowQualitySrc" :alt="alt" :style="{ 'opacity: 0': loaded }"
       class="low-quality" @load="onLowQualityLoad" format="webp" width="auto" height="auto" quality="10"
       sizes="xs:10px" />

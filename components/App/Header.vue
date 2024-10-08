@@ -78,6 +78,7 @@ const toggleAbout = () => {
 <style scoped>
 .header {
   padding: 0px;
+  padding-right: 5px;
   position: fixed;
   display: flex;
   justify-content: center;
@@ -185,7 +186,7 @@ button {
   position: absolute;
   transition: opacity 0.1s ease-in;
   left: -8px;
-  top: -3px;
+  top: -2px;
   bottom: 0;
   content: '[';
   font-size: 1.2em;
@@ -196,7 +197,7 @@ button {
   position: absolute;
   transition: opacity 0.1s ease-in;
   right: -8px;
-  top: -3px;
+  top: -2px;
   bottom: 0;
   content: ']';
   font-size: 1.2em;
