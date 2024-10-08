@@ -16,6 +16,9 @@ const { data } = await useKql({
         id: true,
         title: true,
         tags: true,
+        client: true,
+        credit: true,
+        color: true,
         cover: {
           query: 'page.content.cover.toFile',
           select: {
@@ -180,14 +183,7 @@ const applyRandomColorToHeader = () => {
   }
   const filters = document.querySelector('.filters');
   const about = document.querySelector('.about-content');
-  const captions = document.querySelectorAll('figcaption');
 
-  if (captions) {
-    captions.forEach(caption => {
-      caption.style.color = randomColor + 'important !';
-      caption.style.transition = "color 0.5s ease";
-    })
-  }
   if (about) {
     about.style.color = randomColor;
     about.style.transition = "color 0.5s ease";
@@ -320,11 +316,11 @@ onBeforeRouteLeave((to, from, next) => {
               :sizes="'xs:600px'" />
 
 
-            <figcaption class="caption">
+            <figcaption class="caption" :style='{ color: project.color }'>
               <div v-if="project.title">
                 Projet: {{ project.title }}
               </div>
-              <div v-if="project.clien">
+              <div v-if="project.client">
                 Client: {{ project.client }}
               </div>
               <div v-if="project.credit">
@@ -462,6 +458,7 @@ figure {
   width: 100%;
   font-size: var(--font-base);
   text-transform: uppercase;
+  z-index: -1;
 }
 
 @media screen and (max-width: 720px) {

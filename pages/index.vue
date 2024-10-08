@@ -125,11 +125,20 @@ const getRandomColor = () => {
 
 const applyRandomColorToHeader = () => {
   const header = document.querySelector('header');
+  const about = document.querySelector('.about-overlay');
+  const captions = document.querySelectorAll('.caption');
   const randomColor = getRandomColor();
   if (header) {
     header.style.color = randomColor;
     header.style.transition = "color 0.5s ease";
   }
+  if (about) {
+    about.style.color = randomColor;
+    about.style.transition = "color 0.5s ease";
+  }
+
+
+
   document.querySelector('.icon-piment').style.color = randomColor;
   document.querySelector('.icon-piment').style.transition = "color 0.5s ease";
 

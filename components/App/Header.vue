@@ -32,7 +32,6 @@ const toggleAbout = () => {
   showAbout.value = !showAbout.value;
 };
 
-
 </script>
 
 <template>
@@ -52,7 +51,8 @@ const toggleAbout = () => {
 
 
 
-  <div v-if="showAbout" class="about-overlay" @click="toggleAbout">
+  <div :style="{ opacity: showAbout ? 0.8 : 0, pointerEvents: showAbout ? 'auto' : 'none' }" class="about-overlay "
+    @click="toggleAbout">
     <div class="about-content">
       <div class="col">
         <p>Simon Guittet</p>
@@ -166,7 +166,7 @@ button {
   align-items: start;
   gap: 10px;
   text-align: left;
-  color: currentColor;
+  color: inherit !important;
 }
 
 .col p {
