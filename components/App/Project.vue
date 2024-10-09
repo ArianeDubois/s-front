@@ -19,8 +19,8 @@ const next = ref(null);
     :class="`${isLeft ? 'project-excerpt__left' : 'project-excerpt__right'} project-excerpt`">
     <NuxtLink :to="`/${project?.id}`">
       <figure>
-        <NuxtImg :data-width="width" :data-height="height" format="webp" sizes="xs:1080px" quality="80"
-          :src="project.cover.url ?? project.images[0].url" alt="" />
+        <NuxtImg :data-width="width" :data-height="height" format="webp" sizes="30vw sm:30vw md:30vw lg:30vw xl:30vw"
+          quality="80" :src="project.cover.url ?? project.images[0].url" alt="" />
       </figure>
     </NuxtLink>
   </article>

@@ -166,13 +166,13 @@ onMounted(() => {
         <li v-for="(image, index) in page?.gallery ?? []" :key="index" :class="index === 0 ? 'cover' : 'images'">
           <figure v-if="index === 0" class="cover">
             <NuxtImg @load="imageLoad()" loading="eager" :src="image.url" :alt="image.alt" width="auto" height="auto"
-              quality="80" format="webp" sizes="xs:1080px" />
+              quality="80" format="webp" sizes="100vw sm:100vw md:100vw lg:70vw xl:70vw" />
           </figure>
 
           <figure class="lazy-wrapper" v-else
             :style="`width: auto; position: relative; overflow: hidden; aspect-ratio: ${image.width} / ${image.height}; display: flex; justify-content: center; align-items: center; margin:auto`">
             <ElementLazyImage ref="lazyImage" :is-loading="true" :src="image.url" :lowQualitySrc="image.url"
-              :alt="image.alt" sizes="100vw sm:100vw md:100vw lg:100vw xl:100vw" />
+              :alt="image.alt" sizes="100vw sm:100vw md:100vw lg:70vw xl:70vw" />
           </figure>
         </li>
       </ul>
@@ -364,7 +364,7 @@ li.images {
 
 .infos .value .key {
   font-family: "Bebas";
-  font-size: 0.100em;
+  font-size: 0.25em;
   line-height: 1;
 
 }
