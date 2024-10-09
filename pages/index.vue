@@ -287,7 +287,7 @@ onMounted(() => {
 
 .loading-screen .loading-images {
   position: relative;
-  width: 10%;
+  width: 200px;
   min-height: 300px;
   margin-bottom: 5px;
 }
