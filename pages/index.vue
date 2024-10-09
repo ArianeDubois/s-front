@@ -176,17 +176,35 @@ onMounted(() => {
     <div class="swipers">
       <div class="swiper-left">
         <Swiper :pagination="{ type: 'fraction' }" :initialSlide="1" :speed="400"
-          :modules="[EffectCreative, Pagination, Autoplay]" effect="creative" :creative-effect="{
+          :modules="[EffectCreative, Pagination, Autoplay]" effect="creative" :breakpoints="{
+            '720': {
+              creativeEffect: {
+                limitProgress: 1,
+                prev: { scale: 3 },
+                next: { scale: 0 },
+              },
+            },
+
+            '1024': {
+              creativeEffect: {
+                limitProgress: 1,
+                prev: { scale: 2 },
+                next: { scale: 0 },
+              }
+            }
+
+          }" :creative-effect="{
             limitProgress: 1,
-            prev: { scale: 2 },
+            prev: { scale: 4 },
             next: { scale: 0 },
           }" :loop="true" :space-between="0" :style="`cursor: url(${leftArrowSvg}), auto`" @click="slidePrev"
           @swiper="setFirstSwiper">
-          <SwiperSlide v-for="(image, index) in carrouselImages" :key="index" :loadPrevNextAmount="2">
+          <SwiperSlide v-for="(image, index) in carrouselImages" :key="index" :loadPrevNext="true"
+            :loadPrevNextAmount="4">
             <figure :style="`aspect-ratio: ${image.width}/${image.height};`">
-              <NuxtImg fit="cover" :placeholder="img(image.src, { h: 10, f: 'webp', blur: 2, q: 50 })" :preload="true"
-                :src="image.url" :alt="image.alt || 'Image description'" :width="image.width" :height="image.height"
-                quality="80" format="webp" densities="x1 x2" sizes="100vw sm:100vw" @load="loadImageLeft" />
+              <NuxtImg fit="cover" :preload="true" :src="image.url" :alt="image.alt || 'Image description'"
+                :width="image.width" :height="image.height" quality="80" format="webp" sizes="100vw lg:50vw"
+                @load="loadImageLeft" />
             </figure>
 
             <figcaption class="caption">
@@ -207,29 +225,31 @@ onMounted(() => {
                 prev: { scale: 3 },
                 next: { scale: 0 },
               },
-              '1024': {
-                creativeEffect: {
-                  limitProgress: 1,
-                  prev: { scale: 2 },
-                  next: { scale: 0 },
-                }
-              }
             },
+            '1024': {
+              creativeEffect: {
+                limitProgress: 1,
+                prev: { scale: 2 },
+                next: { scale: 0 },
+              }
+            }
+
           }" :creative-effect="{
             limitProgress: 1,
-            prev: { scale: 4 },
+            prev: { scale: 2 },
             next: { scale: 0 },
-          }" :loop="true" :initialSlide="1" :space-between="0" :loadPrevNext="true" :loadPrevNextAmount="2"
+          }" :loop="true" :initialSlide="1" :space-between="0" :loadPrevNext="true" :loadPrevNextAmount="4"
           @swiper="setSecondSwiper" :style="`cursor: url(${rightArrowSvg}), auto;`" @click="slideNext">
           <SwiperSlide v-for="(image, index) in carrouselImages" :key="index">
             <figure>
-              <div class="swiper-zoom-container" data-swiper-zoom="5"
+              <div class="swiper-zoom-container" data-swiper-zoom="1"
                 :style="`aspect-ratio: ${image.width}/${image.height};`">
-                <NuxtImg fit="cover" :placeholder="img(image.src, { h: 10, f: 'webp', blur: 2, q: 50 })" :preload="true"
-                  :src="image.url" :alt="image.alt || 'Image description'" :width="image.width" :height="image.height"
-                  quality="80" format="webp" densities="x1 x2" sizes="100vw sm:100vw" @load="loadImageRight" />
+                <NuxtImg fit="cover" :preload="true" :src="image.url" :alt="image.alt || 'Image description'"
+                  :width="image.width" :height="image.height" quality="80" format="webp" sizes="150vw lg:75vw"
+                  @load="loadImageRight" />
               </div>
             </figure>
+
             <figcaption class="caption">
               <div v-if="image.project">Projet: {{ image.project }}</div>
               <div v-if="image.client">Client: {{ image.client }}</div>
@@ -321,17 +341,17 @@ onMounted(() => {
   transform: scale(1);
 }
 
-body.infos-is-active .swiper-slide-active figure:after {
+/* body.infos-is-active .swiper-slide-active figure:after {
   content: '';
   position: fixed;
   inset: 0;
   background-color: white;
   opacity: 0.8;
-}
+} */
 
-body.infos-is-active .swiper-right .swiper-slide-active figure:after {
+/* body.infos-is-active .swiper-right .swiper-slide-active figure:after {
   transform: scale(2);
-}
+} */
 
 
 
@@ -342,7 +362,6 @@ body.infos-is-active .swiper-right .swiper-slide-active figure:after {
   width: 100%;
   height: 100%;
   margin-left: 10px;
-
   color: black;
   z-index: 100;
   display: flex;
@@ -376,7 +395,7 @@ body.infos-is-active .caption {
 
 
 
-@media screen and (max-width: 720px) {
+@media screen and (max-width: 1024px) {
   .swiper-left {
     display: none;
   }

@@ -321,7 +321,7 @@ onBeforeRouteLeave((to, from, next) => {
             :style="`width: 100%; position: relative;padding-top: ${project?.image?.height / project?.image?.width * 100}%`">
             <ElementLazyImage :is-loading="true" ref="lazyImage" :src="project?.cover?.url ?? project?.images?.[0].url"
               :lowQualitySrc="project?.cover?.url" :alt="project?.cover?.alt ?? project?.images?.[0]?.alt"
-              :sizes="'xs:600px'" />
+              sizes="25vw sm:25vw md:50vw lg:50vw xl:50vw" />
 
 
             <figcaption class="caption" :style='{ color: project.color }'>

@@ -18,7 +18,7 @@ export default defineNuxtConfig({
 
   image: {
     // domains: ['http://s-back.test'],
-    domains: ['preprod.arianedubois.fr/s-back/public'],
+    domains: ['preprod.arianedubois.fr'],
 
     screens: {
       xs: 320,

@@ -172,7 +172,7 @@ onMounted(() => {
           <figure class="lazy-wrapper" v-else
             :style="`width: auto; position: relative; overflow: hidden; aspect-ratio: ${image.width} / ${image.height}; display: flex; justify-content: center; align-items: center; margin:auto`">
             <ElementLazyImage ref="lazyImage" :is-loading="true" :src="image.url" :lowQualitySrc="image.url"
-              :alt="image.alt" :sizes="'xs:1200px'" />
+              :alt="image.alt" sizes="100vw sm:100vw md:100vw lg:100vw xl:100vw" />
           </figure>
         </li>
       </ul>
@@ -364,7 +364,7 @@ li.images {
 
 .infos .value .key {
   font-family: "Bebas";
-  font-size: 0.25em;
+  font-size: 0.100em;
   line-height: 1;
 
 }
