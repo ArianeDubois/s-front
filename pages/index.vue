@@ -162,7 +162,7 @@ onMounted(() => {
     <div v-if="loading" class="loading-screen" @click="onClick">
       <div class="loading-images">
         <figure v-for="(image, index) in carrouselImages" :key="index"
-          :style="`pointer-events: none; aspect-ratio: ${image.ratio};`">
+          :style="`pointer-events: none; aspect-ratio: ${image.width}/${image.height};`">
           <NuxtImg :preload="true" :src="image.url" :alt="image.alt || 'Image description'" width="100%" height="100%"
             quality="80" format="webp" sizes="300px" @load="loadImageRight" />
         </figure>
@@ -183,7 +183,7 @@ onMounted(() => {
           }" :loop="true" :space-between="0" :style="`cursor: url(${leftArrowSvg}), auto`" @click="slidePrev"
           @swiper="setFirstSwiper">
           <SwiperSlide v-for="(image, index) in carrouselImages" :key="index" :loadPrevNextAmount="2">
-            <figure>
+            <figure :style="`aspect-ratio: ${image.width}/${image.height};`">
               <NuxtImg fit="cover" :placeholder="img(image.src, { h: 10, f: 'webp', blur: 2, q: 50 })" :preload="true"
                 :src="image.url" :alt="image.alt || 'Image description'" width="100%" height="100%" quality="80"
                 format="webp" densities="x1 x2" sizes="100vw sm:100vw" @load="loadImageLeft" />
@@ -223,7 +223,8 @@ onMounted(() => {
           @swiper="setSecondSwiper" :style="`cursor: url(${rightArrowSvg}), auto;`" @click="slideNext">
           <SwiperSlide v-for="(image, index) in carrouselImages" :key="index">
             <figure>
-              <div class="swiper-zoom-container" data-swiper-zoom="5" :style="`aspect-ratio: ${image.ratio};`">
+              <div class="swiper-zoom-container" data-swiper-zoom="5"
+                :style="`aspect-ratio: ${image.width}/${image.height};`">
                 <NuxtImg fit="cover" :placeholder="img(image.src, { h: 10, f: 'webp', blur: 2, q: 50 })" :preload="true"
                   :src="image.url" :alt="image.alt || 'Image description'" width="100%" height="100%" quality="80"
                   format="webp" densities="x1 x2" sizes="100vw sm:100vw" @load="loadImageRight" />
