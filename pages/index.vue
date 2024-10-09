@@ -184,7 +184,7 @@ onMounted(() => {
           <SwiperSlide v-for="(image, index) in carrouselImages" :key="index" :loadPrevNextAmount="2">
             <figure>
               <NuxtImg fit="cover" :placeholder="img(image.src, { h: 10, f: 'webp', blur: 2, q: 50 })" :preload="true"
-                :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto" quality="80"
+                :src="image.url" :alt="image.alt || 'Image description'" width="400" height="400" quality="80"
                 format="webp" densities="x1 x2" sizes="100vw sm:100vw" @load="loadImageLeft" />
             </figure>
 
@@ -224,7 +224,7 @@ onMounted(() => {
             <figure>
               <div class="swiper-zoom-container" data-swiper-zoom="5">
                 <NuxtImg fit="cover" :placeholder="img(image.src, { h: 10, f: 'webp', blur: 2, q: 50 })" :preload="true"
-                  :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto" quality="80"
+                  :src="image.url" :alt="image.alt || 'Image description'" width="400" height="500" quality="80"
                   format="webp" densities="x1 x2" sizes="100vw sm:100vw" @load="loadImageRight" />
               </div>
             </figure>
