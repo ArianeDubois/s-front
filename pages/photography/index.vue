@@ -72,6 +72,7 @@ const showImageInfos = ref(false);
 const imageWrapper = ref(null);
 const filters = ref(null);
 const lazyImage = ref(null);
+const resizeHeight = ref(false);
 
 
 const processProjects = () => {
@@ -123,7 +124,12 @@ const filterProjectsByTag = (tag) => {
       tl.to('.projects', { scale: 1, duration: 0.01 }, 0);
       tl.to(project, { scale: 1, opacity: 1, duration: 0.2 }, 0);
     });
-    $gsap.set('.page', { height: 'auto' });
+
+    $gsap.set('.page', {
+      height: 'auto', onComplete: () => {
+        resizeHeight.value = true
+      }
+    },);
 
   } else {
     selectedTag.value = tag;
@@ -133,13 +139,15 @@ const filterProjectsByTag = (tag) => {
       $gsap.set(project, { transformOrigin: 'top' });
       $gsap.to('.projects', {
         scale: 0.65, duration: 0.001,
-        onComplete: () => {
-          $gsap.set('.page', { height: document.querySelector('.projects').getBoundingClientRect().height * 0.65 });
-        }
       }, 0);
 
-      $gsap.set('.page', { height: document.querySelector('.projects').getBoundingClientRect().height * 0.65 });
-
+      if (resizeHeight.value == false) {
+        $gsap.set('.page', {
+          height: document.querySelector('.projects').getBoundingClientRect().height * 0.65, onComplete: () => {
+            resizeHeight.value = true
+          }
+        });
+      }
       tl.to('.project', { scale: 0.65, duration: 0.2 }, 0);
 
       if (projectTags.includes(tag)) {
