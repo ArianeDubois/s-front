@@ -19,8 +19,9 @@ const next = ref(null);
     :class="`${isLeft ? 'project-excerpt__left' : 'project-excerpt__right'} project-excerpt`">
     <NuxtLink :to="`/${project?.id}`">
       <figure>
-        <NuxtImg :data-width="width" :data-height="height" format="webp" sizes="30vw sm:30vw md:30vw lg:30vw xl:30vw"
-          quality="80" :src="project.cover.url ?? project.images[0].url" alt="" />
+        <NuxtImg :data-width="width" :data-height="height" format="webp" :preload="true"
+          sizes="800px sm:800px md:800px lg:800px xl:800px" quality="80"
+          :src="project.cover.url ?? project.images[0].url" alt="" />
       </figure>
     </NuxtLink>
   </article>
@@ -32,6 +33,7 @@ const next = ref(null);
   top: 0;
   bottom: 0;
   height: 100vh;
+  overflow: hidden;
   /* max-height: 100vh;*/
   /* width: calc(100% - 200px); */
   width: 100%;
@@ -56,14 +58,14 @@ const next = ref(null);
   transform: translateX(100%);
 }
 
-.project-excerpt__right:not(.transition-clone) img {
+.project-excerpt__right:not(.transition-nav-clone) img {
   max-width: calc(100vw - 200px);
 
   object-position: center;
   /* transform: trans; */
 }
 
-.project-excerpt__left:not(.transition-clone) img {
+.project-excerpt__left:not(.transition-nav-clone) img {
   max-width: calc(100vw - 200px);
 
   object-position: center;

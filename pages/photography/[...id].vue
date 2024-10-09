@@ -81,7 +81,7 @@ const loaded = ref(false);
 const lazyImage = ref(null);
 
 const onLoad = () => {
-  // loaded.value = true;
+  loaded.value = true;
 };
 
 onBeforeRouteLeave((to, from, next) => {
@@ -107,6 +107,9 @@ onBeforeRouteUpdate((to, from, next) => {
 });
 
 const imageLoad = () => {
+  loaded.value = true;
+  document.body.style.overflow = 'auto'
+
   $gsap.to('header', {
     opacity: 1,
   });
@@ -123,7 +126,9 @@ const imageLoad = () => {
     $gsap.to('.transition-clone', {
       opacity: 0,
       duration: 0.5,
-      onComplete: () => document.querySelectorAll('.transition-nav-clone').forEach(el => el.remove()),
+      onComplete: () => document.querySelectorAll('.transition-nav-clone').forEach(el => el.remove()
+        // document.querySelector('.albumg-gallery').style.position = "static";
+      ),
     });
   }
 
@@ -133,6 +138,9 @@ const imageLoad = () => {
 };
 
 onMounted(() => {
+  if (!loaded.value) {
+    document.body.style.overflow = 'hidden'
+  }
   $gsap.to(infos.value, { opacity: 1, duration: 0.25 });
   if (page?.color) {
     if (document.querySelector('.about-content')) {
@@ -143,18 +151,20 @@ onMounted(() => {
   }
 
   nextTick(() => {
-    lazyImage.value.forEach(img => {
-      $gsap.to(img.$el.children[0], {
-        opacity: 1,
-        scrollTrigger: {
-          trigger: img.$el,
-          start: "top center",
-          end: "+=100",
-          scrub: true
-        },
-        ease: 'power2.out',
+    if (lazyImage.value) {
+      lazyImage.value.forEach(img => {
+        $gsap.to(img.$el.children[0], {
+          opacity: 1,
+          scrollTrigger: {
+            trigger: img.$el,
+            start: "top center",
+            end: "+=100",
+            scrub: true
+          },
+          ease: 'power2.out',
+        });
       });
-    });
+    }
   })
 });
 </script>
@@ -166,7 +176,7 @@ onMounted(() => {
         <li v-for="(image, index) in page?.gallery ?? []" :key="index" :class="index === 0 ? 'cover' : 'images'">
           <figure v-if="index === 0" class="cover">
             <NuxtImg @load="imageLoad()" loading="eager" :src="image.url" :alt="image.alt" width="auto" height="auto"
-              quality="80" format="webp" sizes="100vw sm:100vw md:100vw lg:70vw xl:70vw" />
+              quality="80" format="webp" sizes="70vw sm:70vw md:70vw lg:50vw xl:50vw" />
           </figure>
 
           <figure class="lazy-wrapper" v-else
@@ -328,6 +338,16 @@ li.images {
 
 
 @media screen and (max-width: 720px) {
+  .album-gallery {
+    margin-top: 30px;
+    gap: 10px;
+
+  }
+
+  .cover {
+    margin-bottom: -3px;
+  }
+
   .infos {
     gap: 10px;
   }
@@ -377,8 +397,20 @@ figure {
 }
 
 .cover {
-  height: 100vh;
   width: 100%;
+}
+
+@media screen and (min-width: 720px) {
+  .cover {
+    height: 100vh;
+  }
+}
+
+li:first-child:last-child .cover {
+  /* height: calc(100vh - 30px); */
+  height: 100vh;
+  position: fixed;
+  inset: 0;
 }
 
 img {

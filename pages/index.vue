@@ -236,7 +236,7 @@ onMounted(() => {
 
           }" :creative-effect="{
             limitProgress: 1,
-            prev: { scale: 2 },
+            prev: { scale: 3.5 },
             next: { scale: 0 },
           }" :loop="true" :initialSlide="1" :space-between="0" :loadPrevNext="true" :loadPrevNextAmount="4"
           @swiper="setSecondSwiper" :style="`cursor: url(${rightArrowSvg}), auto;`" @click="slideNext">

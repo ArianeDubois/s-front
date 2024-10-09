@@ -216,90 +216,95 @@ onMounted(() => {
 
 
 onBeforeRouteLeave((to, from, next) => {
-  projects.value.classList.add('pointer-event-none');
+  if (window.innerWidth >= 720) {
+    projects.value.classList.add('pointer-event-none');
 
-  if (to.name.startsWith('photography')) {
-    const project = projects.value.querySelector(`[data-slug="${to.params['id'][0]}"]:not(.clone)`);
-    const imgbBCR = project.querySelector('img').getBoundingClientRect();
-    const otherProjects = projects.value.querySelectorAll('.project');
-    clonedImage.value = project.querySelector('.high-quality').cloneNode(true);
-    clonedImage.value.style.position = "absolute"
-    clonedImage.value.style.top = `${imgbBCR.top + window.scrollY}px`;
-    clonedImage.value.style.left = `${imgbBCR.left}px`;
-    clonedImage.value.style.width = `${imgbBCR.width}px`;
-    clonedImage.value.style.height = `${imgbBCR.height}px`;
-    clonedImage.value.style.zIndex = "10";
-    clonedImage.value.style.opacity = "1";
-    clonedImage.value.classList.add('transition-clone');
-    document.body.appendChild(clonedImage.value);
-
-
-
-    // $gsap.set(clonedImage.value, {
-    //   position: 'absolute',
-    //   top:imgbBCR.top + window.scrollY
-    //   left: imgbBCR.left,
-    //   width: imgbBCR.width,
-    //   height: imgbBCR.height,
-    //   zIndex: 10,
-    //   opacity: 1,
-    //   onComplete: () => {
-    //     console.log(clonedImage.value)
-    //   }
-    // });
+    if (to.name.startsWith('photography')) {
+      const project = projects.value.querySelector(`[data-slug="${to.params['id'][0]}"]:not(.clone)`);
+      const imgbBCR = project.querySelector('img').getBoundingClientRect();
+      const otherProjects = projects.value.querySelectorAll('.project');
+      clonedImage.value = project.querySelector('.high-quality').cloneNode(true);
+      clonedImage.value.style.position = "absolute"
+      clonedImage.value.style.top = `${imgbBCR.top + window.scrollY}px`;
+      clonedImage.value.style.left = `${imgbBCR.left}px`;
+      clonedImage.value.style.width = `${imgbBCR.width}px`;
+      clonedImage.value.style.height = `${imgbBCR.height}px`;
+      clonedImage.value.style.zIndex = "10";
+      clonedImage.value.style.opacity = "1";
+      clonedImage.value.classList.add('transition-clone');
+      document.body.appendChild(clonedImage.value);
 
 
-    otherProjects.forEach(otherProject => {
-      if (otherProject !== project.closest('.project')) {
-        $gsap.to(otherProject, { opacity: 0, duration: 0.15 });
+
+      // $gsap.set(clonedImage.value, {
+      //   position: 'absolute',
+      //   top:imgbBCR.top + window.scrollY
+      //   left: imgbBCR.left,
+      //   width: imgbBCR.width,
+      //   height: imgbBCR.height,
+      //   zIndex: 10,
+      //   opacity: 1,
+      //   onComplete: () => {
+      //     console.log(clonedImage.value)
+      //   }
+      // });
+
+
+      otherProjects.forEach(otherProject => {
+        if (otherProject !== project.closest('.project')) {
+          $gsap.to(otherProject, { opacity: 0, duration: 0.15 });
+        }
+      });
+
+      if (project.querySelector('.low-quality')) {
+        $gsap.set('.low-quality', { opacity: 0 });
+        $gsap.set(project.querySelector('.high-quality'), { opacity: 1 });
       }
-    });
 
-    if (project.querySelector('.low-quality')) {
-      $gsap.set('.low-quality', { opacity: 0 });
-      $gsap.set(project.querySelector('.high-quality'), { opacity: 1 });
+
+      const margin = window.innerWidth >= 720 ? 200 : 20;
+
+
+      const scaleX = (window.innerWidth - margin) / imgbBCR.width;
+
+      const scaleY = window.innerHeight / imgbBCR.height;
+      const scale = Math.min(scaleX, scaleY);
+
+
+      const x = (window.innerWidth / 2) - (imgbBCR.left + (imgbBCR.width / 2));
+      const y = (window.innerHeight / 2) - (imgbBCR.top + (imgbBCR.height / 2));
+
+
+      var tl = $gsap.timeline()
+      // var tl = $gsap.timeline({ delay: 0.25 })
+
+      // tl.to(clonedImage.value, {
+      //   opacity: 1,
+      // })
+      tl.to(project.querySelector('img:not(.transition-clone)'), {
+        opacity: 0,
+        // delay: 0.5
+      })
+      tl.to(clonedImage.value, {
+        duration: 0.5,
+        x: x,
+        y: y,
+        scale: scale,
+        ease: "slow(0.7,0.7,false)",
+
+        onComplete: () => {
+          window.scrollTo(0, 0);
+
+          $gsap.set(clonedImage.value, {
+            top: imgbBCR.top
+          })
+          next();
+        },
+      }, "-=80%");
     }
+  } else {
+    next();
 
-
-    const margin = window.innerWidth >= 720 ? 200 : 20;
-
-
-    const scaleX = (window.innerWidth - margin) / imgbBCR.width;
-
-    const scaleY = window.innerHeight / imgbBCR.height;
-    const scale = Math.min(scaleX, scaleY);
-
-
-    const x = (window.innerWidth / 2) - (imgbBCR.left + (imgbBCR.width / 2));
-    const y = (window.innerHeight / 2) - (imgbBCR.top + (imgbBCR.height / 2));
-
-
-    var tl = $gsap.timeline()
-    // var tl = $gsap.timeline({ delay: 0.25 })
-
-    // tl.to(clonedImage.value, {
-    //   opacity: 1,
-    // })
-    tl.to(project.querySelector('img:not(.transition-clone)'), {
-      opacity: 0,
-      // delay: 0.5
-    })
-    tl.to(clonedImage.value, {
-      duration: 0.5,
-      x: x,
-      y: y,
-      scale: scale,
-      ease: "slow(0.7,0.7,false)",
-
-      onComplete: () => {
-        window.scrollTo(0, 0);
-
-        $gsap.set(clonedImage.value, {
-          top: imgbBCR.top
-        })
-        next();
-      },
-    }, "-=80%");
   }
 });
 </script>

@@ -54,7 +54,7 @@ onBeforeRouteUpdate((to, from, next) => {
 
 
     cloneLeft.value = thumbImage.cloneNode(true);
-    cloneLeft.value.classList.add('transition-clone')
+    cloneLeft.value.classList.add('transition-nav-clone')
     document.body.appendChild(cloneLeft.value);
     navEl.value.parentElement.classList.add('is-transitionning')
     document.body.style.scrollbarWidth = 'none'
@@ -88,7 +88,7 @@ onBeforeRouteUpdate((to, from, next) => {
     tl.to(navEl.value.parentElement.querySelector('figure'), {
       opacity: 0,
     })
-    tl.to(cloneRight.value, {
+    tl.to(cloneLeft.value, {
       opacity: 1,
       onComplete: next
     })
@@ -103,11 +103,14 @@ onBeforeRouteUpdate((to, from, next) => {
 
 
     cloneRight.value = thumbImage.cloneNode(true);
-    cloneRight.value.classList.add('transition-clone')
+    cloneRight.value.style.width = `${thumbWidth}px`;
+    cloneRight.value.setAttribute('style', 'transform: translateX(0) !important; margin-left: 0 !important;');
+    cloneRight.value.style.opacity = '0';
+    cloneRight.value.classList.add('transition-nav-clone');
 
     document.body.appendChild(cloneRight.value);
-    navEl.value.parentElement.classList.add('is-transitionning')
-    document.body.style.scrollbarWidth = 'none'
+    navEl.value.parentElement.classList.add('is-transitionning');
+    document.body.style.scrollbarWidth = 'none';
 
     $gsap.to('.infos', {
       opacity: 0,
