@@ -150,6 +150,21 @@ button {
 
 }
 
+@media screen and (max-width: 720px) {
+  .about-content {
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    height: 100%;
+  }
+
+  .col {
+    flex-direction: column;
+    text-align: center !important;
+    align-items: center !important;
+  }
+}
+
 .about-overlay .is-active {
   opacity: 0.8;
 }

@@ -315,6 +315,18 @@ li.images {
   gap: 5px;
 }
 
+@media screen and (max-width: 1280px) {
+  .infos .icon {
+    transform: scale(0.7) translateY(10px);
+  }
+
+  .infos .value,
+  .button-nav {
+    font-size: var(--font-big-lg);
+  }
+}
+
+
 @media screen and (max-width: 720px) {
   .infos {
     gap: 10px;

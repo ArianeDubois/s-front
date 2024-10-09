@@ -172,7 +172,7 @@ onMounted(() => {
       </div>
     </div>
 
-    <div v-if="carrouselImages" class="swipers">
+    <div class="swipers">
       <div class="swiper-left">
         <Swiper :pagination="{ type: 'fraction' }" :initialSlide="1" :speed="400"
           :modules="[EffectCreative, Pagination, Autoplay]" effect="creative" :creative-effect="{
@@ -409,7 +409,7 @@ body.infos-is-active .caption {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: contain !important;
   /* object-fit: cover; */
 }
 
@@ -417,7 +417,7 @@ body.infos-is-active .caption {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover !important;
 }
 
 
