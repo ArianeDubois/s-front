@@ -226,8 +226,8 @@ onMounted(() => {
               <div class="swiper-zoom-container" data-swiper-zoom="5"
                 :style="`aspect-ratio: ${image.width}/${image.height};`">
                 <NuxtImg fit="cover" :placeholder="img(image.src, { h: 10, f: 'webp', blur: 2, q: 50 })" :preload="true"
-                  :src="image.url" :alt="image.alt || 'Image description'" width="100%" height="100%" quality="80"
-                  format="webp" densities="x1 x2" sizes="100vw sm:100vw" @load="loadImageRight" />
+                  :src="image.url" :alt="image.alt || 'Image description'" :width="image.width" :height="image.height"
+                  quality="80" format="webp" densities="x1 x2" sizes="100vw sm:100vw" @load="loadImageRight" />
               </div>
             </figure>
             <figcaption class="caption">
