@@ -161,8 +161,9 @@ onMounted(() => {
   <div>
     <div v-if="loading" class="loading-screen" @click="onClick">
       <div class="loading-images">
-        <figure v-for="(image, index) in carrouselImages" :key="index" style="pointer-events: none;">
-          <NuxtImg :preload="true" :src="image.url" :alt="image.alt || 'Image description'" width="auto" height="auto"
+        <figure v-for="(image, index) in carrouselImages" :key="index"
+          :style="`pointer-events: none; aspect-ratio: ${image.ratio};`">
+          <NuxtImg :preload="true" :src="image.url" :alt="image.alt || 'Image description'" width="100%" height="100%"
             quality="80" format="webp" sizes="300px" @load="loadImageRight" />
         </figure>
 
@@ -184,7 +185,7 @@ onMounted(() => {
           <SwiperSlide v-for="(image, index) in carrouselImages" :key="index" :loadPrevNextAmount="2">
             <figure>
               <NuxtImg fit="cover" :placeholder="img(image.src, { h: 10, f: 'webp', blur: 2, q: 50 })" :preload="true"
-                :src="image.url" :alt="image.alt || 'Image description'" width="400" height="400" quality="80"
+                :src="image.url" :alt="image.alt || 'Image description'" width="100%" height="100%" quality="80"
                 format="webp" densities="x1 x2" sizes="100vw sm:100vw" @load="loadImageLeft" />
             </figure>
 
@@ -222,9 +223,9 @@ onMounted(() => {
           @swiper="setSecondSwiper" :style="`cursor: url(${rightArrowSvg}), auto;`" @click="slideNext">
           <SwiperSlide v-for="(image, index) in carrouselImages" :key="index">
             <figure>
-              <div class="swiper-zoom-container" data-swiper-zoom="5">
+              <div class="swiper-zoom-container" data-swiper-zoom="5" :style="`aspect-ratio: ${image.ratio};`">
                 <NuxtImg fit="cover" :placeholder="img(image.src, { h: 10, f: 'webp', blur: 2, q: 50 })" :preload="true"
-                  :src="image.url" :alt="image.alt || 'Image description'" width="400" height="500" quality="80"
+                  :src="image.url" :alt="image.alt || 'Image description'" width="100%" height="100%" quality="80"
                   format="webp" densities="x1 x2" sizes="100vw sm:100vw" @load="loadImageRight" />
               </div>
             </figure>
