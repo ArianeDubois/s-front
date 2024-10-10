@@ -79,6 +79,7 @@ const pageIndex = children.findIndex(({ id }) => id === page?.id);
 const infos = ref(null);
 const loaded = ref(false);
 const lazyImage = ref(null);
+const content = ref(null)
 
 const onLoad = () => {
   loaded.value = true;
@@ -150,6 +151,10 @@ onMounted(() => {
     $gsap.set('body', { color: page.color });
   }
 
+  $gsap.to(content.value.children, {
+    opacity: 1,
+    stagger: 0.1
+  })
   nextTick(() => {
     if (lazyImage.value) {
       lazyImage.value.forEach(img => {
@@ -194,7 +199,7 @@ onMounted(() => {
         :to="'/' + (children[pageIndex - 1] ? children[pageIndex - 1].id : children[children.length - 1].id)"
         class="button-nav">PREV</NuxtLink>
 
-      <ul class="content" :style="`color: ${page.color}`">
+      <ul class="content" :style="`color: ${page.color}`" ref="content">
         <li class="icon">
           <ElementIconPiment />
         </li>
@@ -389,6 +394,9 @@ li.images {
 
 }
 
+.content li {
+  opacity: 0;
+}
 
 figure {
   max-height: 100vh;
