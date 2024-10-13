@@ -50,25 +50,53 @@ export default defineNuxtConfig({
 
   nitro: {
     prerender: {
-      // Prerender the index page
       routes: ['/', 'photography', 'photography/**'],
     },
   },
   generate: {
     fallback: true,
   },
+  hooks: {
+    'render:route': async (url, result, context) => {
+      if (url === '/') {
+        const { $kql } = context.nuxtApp
+        const carrouselData = await $kql({
+          query: 'page("home").files.sortBy("sort", "asc")',
+          select: {
+            url: true,
+            alt: true,
+          },
+        })
+
+        // Boucle sur les images récupérées et ajoute-les dans le `head`
+        const images = carrouselData.result || []
+        const preloadLinks = images.map((image) => ({
+          rel: 'preload',
+          href: image.url,
+          as: 'image',
+        }))
+
+        // Injecter dynamiquement les liens dans le head
+        result.meta.push({
+          link: preloadLinks,
+        })
+      }
+    },
+  },
+
+  //preload dans le head les images du caroussel
   head: {
     link: [
       {
         rel: 'preload',
-        href: '/fonts/BebasNeue-Regular.woff2', // Le chemin vers ta police woff2
+        href: '/fonts/BebasNeue-Regular.woff2',
         as: 'font',
         type: 'font/woff2',
         crossorigin: 'anonymous',
       },
       {
         rel: 'preload',
-        href: '/fonts/BebasNeue-Regular.woff', // Le chemin vers ta police woff
+        href: '/fonts/BebasNeue-Regular.woff',
         as: 'font',
         type: 'font/woff',
         crossorigin: 'anonymous',
