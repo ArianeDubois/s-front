@@ -3,8 +3,8 @@ import process from 'node:process'
 
 export default defineNuxtConfig({
   modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image'],
-  ssr: true,
-  target: 'server',
+  // ssr: false,
+  // target: 'server',
 
   image: {
     // domains: ['http://s-back.test'],
@@ -19,6 +19,8 @@ export default defineNuxtConfig({
       xxl: 1536,
       '2xl': 1536,
     },
+    formats: ['image/webp', 'image/jpeg'],
+    lazy: true,
   },
   // plugins: ['~/plugins/gsap.js'],
   gsap: {
@@ -48,8 +50,46 @@ export default defineNuxtConfig({
 
   nitro: {
     prerender: {
-      // Prerender the index page
-      routes: ['/'],
+      routes: async () => {
+        const { $kql } = useNuxtApp() // Utilise nuxt-kql pour interroger Kirby
+
+        // Récupère les slugs de tous les projets depuis Kirby
+        const projectsData = await $kql({
+          query: 'page("photography").children.listed',
+          select: {
+            slug: true,
+          },
+        })
+
+        const projects = projectsData.result
+
+        // Crée un tableau de routes à prérendre pour chaque projet
+        const projectRoutes = projects.map(
+          (project) => `/photography/${project.slug}`,
+        )
+
+        // Ajoute d'autres routes statiques si nécessaire
+        return ['/', '/photography', ...projectRoutes]
+      },
     },
+  },
+
+  head: {
+    link: [
+      {
+        rel: 'preload',
+        href: '/fonts/BebasNeue-Regular.woff2', // Le chemin vers ta police woff2
+        as: 'font',
+        type: 'font/woff2',
+        crossorigin: 'anonymous',
+      },
+      {
+        rel: 'preload',
+        href: '/fonts/BebasNeue-Regular.woff', // Le chemin vers ta police woff
+        as: 'font',
+        type: 'font/woff',
+        crossorigin: 'anonymous',
+      },
+    ],
   },
 })

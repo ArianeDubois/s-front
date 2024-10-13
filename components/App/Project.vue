@@ -20,7 +20,7 @@ const next = ref(null);
     <NuxtLink :to="`/${project?.id}`">
       <figure>
         <NuxtImg :data-width="width" :data-height="height" format="webp" :preload="true"
-          sizes="800px sm:800px md:800px lg:800px xl:800px" quality="80"
+          :sizes="'400px sm:600px md:600px lg:500px xl:800px'" quality="80"
           :src="project.cover.url ?? project.images[0].url" alt="" />
       </figure>
     </NuxtLink>

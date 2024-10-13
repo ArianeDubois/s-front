@@ -181,13 +181,13 @@ onMounted(() => {
         <li v-for="(image, index) in page?.gallery ?? []" :key="index" :class="index === 0 ? 'cover' : 'images'">
           <figure v-if="index === 0" class="cover">
             <NuxtImg @load="imageLoad()" loading="eager" :src="image.url" :alt="image.alt" width="auto" height="auto"
-              quality="80" format="webp" sizes="70vw sm:70vw md:70vw lg:50vw xl:50vw" />
+              quality="80" format="webp" :sizes="'70vw sm:70vw md:70vw lg:50vw xl:50vw'" />
           </figure>
 
           <figure class="lazy-wrapper" v-else
             :style="`width: auto; position: relative; overflow: hidden; aspect-ratio: ${image.width} / ${image.height}; display: flex; justify-content: center; align-items: center; margin:auto`">
             <ElementLazyImage ref="lazyImage" :is-loading="true" :src="image.url" :lowQualitySrc="image.url"
-              :alt="image.alt" sizes="100vw sm:100vw md:100vw lg:70vw xl:70vw" />
+              :alt="image.alt" :sizes="'100vw sm:100vw md:100vw lg:70vw xl:70vw'" />
           </figure>
         </li>
       </ul>

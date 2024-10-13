@@ -163,8 +163,8 @@ onMounted(() => {
       <div class="loading-images">
         <figure v-for="(image, index) in carrouselImages" :key="index"
           :style="`pointer-events: none; aspect-ratio: ${image.width}/${image.height};`">
-          <NuxtImg :preload="true" :src="image.url" :alt="image.alt || 'Image description'" width="100%" height="100%"
-            quality="80" format="webp" sizes="300px" @load="loadImageRight" />
+          <NuxtImg rel="preload" :preload="true" :src="image.url" :alt="image.alt || 'Image description'" width="100%"
+            height="100%" quality="80" format="webp" :sizes="'300px'" @load="loadImageRight" />
         </figure>
 
         <div class="icon-piment">
@@ -203,7 +203,7 @@ onMounted(() => {
             :loadPrevNextAmount="4">
             <figure :style="`aspect-ratio: ${image.width}/${image.height};`">
               <NuxtImg fit="cover" :preload="true" :src="image.url" :alt="image.alt || 'Image description'"
-                :width="image.width" :height="image.height" quality="80" format="webp" sizes="100vw lg:50vw"
+                :width="image.width" :height="image.height" quality="80" format="webp" :sizes="'100vw lg:50vw'"
                 @load="loadImageLeft" />
             </figure>
 
@@ -245,7 +245,7 @@ onMounted(() => {
               <div class="swiper-zoom-container" data-swiper-zoom="1"
                 :style="`aspect-ratio: ${image.width}/${image.height};`">
                 <NuxtImg fit="cover" :preload="true" :src="image.url" :alt="image.alt || 'Image description'"
-                  :width="image.width" :height="image.height" quality="80" format="webp" sizes="150vw lg:75vw"
+                  :width="image.width" :height="image.height" quality="80" format="webp" :sizes="'150vw lg:75vw'"
                   @load="loadImageRight" />
               </div>
             </figure>
