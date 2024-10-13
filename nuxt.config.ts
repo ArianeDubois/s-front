@@ -81,6 +81,40 @@ export default defineNuxtConfig({
           link: preloadLinks,
         })
       }
+      if (url === '/photography') {
+        const { $kql } = context.nuxtApp
+
+        // Récupération des images de couverture via la requête KQL
+        const { result: pageData } = await $kql({
+          query: 'page("photography").children.listed',
+          select: {
+            cover: {
+              query: 'page.content.cover.toFile',
+              select: {
+                url: true,
+                alt: true,
+              },
+            },
+          },
+        })
+
+        // Récupérer toutes les images de couverture
+        const covers = pageData
+          .map((project) => project.cover)
+          .filter((cover) => cover?.url)
+
+        // Créer les balises de préchargement pour les images
+        const preloadLinks = covers.map((cover) => ({
+          rel: 'preload',
+          href: cover.url,
+          as: 'image',
+        }))
+
+        // Injecter les balises de préchargement dans le head
+        result.meta.push({
+          link: preloadLinks,
+        })
+      }
     },
   },
 

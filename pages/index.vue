@@ -245,7 +245,7 @@ onMounted(() => {
               <div class="swiper-zoom-container" data-swiper-zoom="1"
                 :style="`aspect-ratio: ${image.width}/${image.height};`">
                 <NuxtImg fit="cover" :preload="true" :src="image.url" :alt="image.alt || 'Image description'"
-                  :width="image.width" :height="image.height" quality="80" format="webp" :sizes="'150vw lg:75vw'"
+                  :width="image.width" :height="image.height" quality="80" format="webp" :sizes="'100vw lg:75vw'"
                   @load="loadImageRight" />
               </div>
             </figure>
