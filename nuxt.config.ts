@@ -50,30 +50,13 @@ export default defineNuxtConfig({
 
   nitro: {
     prerender: {
-      routes: async () => {
-        const { $kql } = useNuxtApp() // Utilise nuxt-kql pour interroger Kirby
-
-        // Récupère les slugs de tous les projets depuis Kirby
-        const projectsData = await $kql({
-          query: 'page("photography").children.listed',
-          select: {
-            slug: true,
-          },
-        })
-
-        const projects = projectsData.result
-
-        // Crée un tableau de routes à prérendre pour chaque projet
-        const projectRoutes = projects.map(
-          (project) => `/photography/${project.slug}`,
-        )
-
-        // Ajoute d'autres routes statiques si nécessaire
-        return ['/', '/photography', ...projectRoutes]
-      },
+      // Prerender the index page
+      routes: ['/', 'photography', 'photography/', '/sitemap.xml'],
     },
   },
-
+  generate: {
+    fallback: true,
+  },
   head: {
     link: [
       {
