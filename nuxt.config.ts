@@ -52,6 +52,9 @@ export default defineNuxtConfig({
     prerender: {
       routes: ['/', 'photography', 'photography/**'],
     },
+    compressPublicAssets: {
+      gzip: true,
+    },
   },
   generate: {
     fallback: true,

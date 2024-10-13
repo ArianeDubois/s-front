@@ -1,5 +1,5 @@
 <script setup>
-const { $gsap, $ScrollTrigger } = useNuxtApp();
+const { $gsap, } = useNuxtApp();
 const selectedTag = ref(null); // Tag sélectionné
 
 const { data } = await useKql({
@@ -330,8 +330,7 @@ onBeforeRouteLeave((to, from, next) => {
 
             <ElementLazyImage v-else="project.isClone" :is-preload="true" :is-loading="false" ref="lazyImage"
               :src="project?.cover?.url ?? project?.images?.[0].url" :lowQualitySrc="project?.cover?.url"
-              :alt="project?.cover?.alt ?? project?.images?.[0]?.alt"
-              :sizes="'25vw sm:25vw md:33.33vw lg:33.33vw xl:33.33vw'" />
+              :alt="project?.cover?.alt ?? project?.images?.[0]?.alt" :sizes="'25vw sm:25vw md:30vw lg:30vw xl:30vw'" />
 
 
             <figcaption class="caption" :style='{ color: project.color }'>
