@@ -51,7 +51,7 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       // Prerender the index page
-      routes: ['/', 'photography', 'photography/**', '/sitemap.xml'],
+      routes: ['/', 'photography', 'photography/**'],
     },
   },
   generate: {
