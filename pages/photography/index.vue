@@ -324,7 +324,7 @@ onBeforeRouteLeave((to, from, next) => {
         <NuxtLink :to="`/${project.id}`">
           <figure ref="imageWrapper"
             :style="`width: 100%; position: relative;padding-top: ${project?.image?.height / project?.image?.width * 100}%`">
-            <ElementLazyImage v-if="project.isClone" :is-preload="true" :is-loading="false" ref="lazyImage"
+            <ElementLazyImage v-if="project.isClone" :is-preload="false" :is-loading="true" ref="lazyImage"
               :src="project?.cover?.url ?? project?.images?.[0].url" :lowQualitySrc="project?.cover?.url"
               :alt="project?.cover?.alt ?? project?.images?.[0]?.alt" :sizes="'20vw sm:20vw md:25vw lg:25vw xl:25vw'" />
 
