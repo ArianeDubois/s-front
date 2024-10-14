@@ -18,6 +18,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "^2.18.0",
     "@nuxt/image": "^1.7.0",
+    "@nuxtjs/seo": "2.0.0-rc.23",
     "@sindresorhus/slugify": "^2.2.1",
     "@types/node": "^20.12.12",
     "@vueuse/nuxt": "^10.9.0",

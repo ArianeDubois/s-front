@@ -1,40 +1,57 @@
 <script setup lang="ts">
 import '~/assets/css/main.css'
-import '~/assets/css/medium-zoom.css'
 
+// Récupération des données SEO depuis Kirby
+const { data: seoData } = await useKql({
+  query: 'site',
+  select: {
+    meta_title: true,
+    meta_description: true,
+    meta_keywords: true,
+    og_title: true,
+    og_description: true,
+    og_image: {
+      query: 'site.content.og_image.toFile',
+      select: {
+        url: true,
+      },
+    },
+    canonical_url: true,
+  },
+});
 
+// const seo = computed(() => seoData.value?.result);
+const seo = seoData.value?.result;
+setPage(seo);
+
+useSeoMeta({
+  keywords: seo?.meta_keywords,
+  title: seo?.meta_title,
+  ogTitle: seo?.meta_title,
+  description: `${seo?.meta_description}`,
+  ogDescription: `${seo?.meta_description}`,
+  ogImage: 'https://example.com/image.png',
+  twitterCard: 'summary_large_image',
+})
 </script>
 
 <template>
   <Html lang="en">
 
   <Head>
-    <Link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
   </Head>
 
   <Body>
     <AppHeader />
-
     <main class="main">
       <NuxtPage />
     </main>
-
   </Body>
 
   </Html>
 </template>
 
 <style>
-/* .infos-is-active .overlay-bg {
-  position: absolute;
-  inset: 0;
-  background-color: white;
-  z-index: 30;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.infos-is-active .overlay-bg {
-  opacity: 0.8;
-} */
+/* Styles personnalisés */
 </style>

@@ -180,8 +180,8 @@ onMounted(() => {
       <ul class="album-gallery">
         <li v-for="(image, index) in page?.gallery ?? []" :key="index" :class="index === 0 ? 'cover' : 'images'">
           <figure v-if="index === 0" class="cover">
-            <NuxtImg @load="imageLoad()" loading="eager" :src="image.url" :alt="image.alt" width="auto" height="auto"
-              quality="80" format="webp" :sizes="'70vw sm:70vw md:70vw lg:50vw xl:50vw'" />
+            <NuxtImg @load="imageLoad()" loading="eager" :preload="true" :src="image.url" :alt="image.alt" :width="image.width"
+              :height="image.height" quality="80" format="webp" :sizes="'70vw sm:70vw md:70vw lg:50vw xl:50vw'" />
           </figure>
 
           <figure class="lazy-wrapper" v-else

@@ -5,7 +5,12 @@ export default defineNuxtConfig({
   modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image'],
   // ssr: false,
   // target: 'server',
-
+  site: {
+    url: 'simonguitet.com',
+    name: 'Awesome Site',
+    description: 'Welcome to my awesome site!',
+    defaultLocale: 'en', // not needed if you have @nuxtjs/i18n installed
+  },
   image: {
     // domains: ['http://s-back.test'],
     domains: ['preprod.arianedubois.fr'],
@@ -71,7 +76,7 @@ export default defineNuxtConfig({
           },
         })
 
-        // Boucle sur les images récupérées et ajoute-les dans le `head`
+        // Boucle sur les images récupérées et ajoute-les dans le head
         const images = carrouselData.result || []
         const preloadLinks = images.map((image) => ({
           rel: 'preload',
@@ -121,7 +126,6 @@ export default defineNuxtConfig({
     },
   },
 
-  //preload dans le head les images du caroussel
   head: {
     link: [
       {
