@@ -126,6 +126,17 @@ export default defineNuxtConfig({
     },
   },
 
+  scripts: {
+    registry: {
+      googleAnalytics: {
+        id: 'G-0THPN5WRZC',
+      },
+      googleTagManager: {
+        id: 'GTM-5DLGB6XV',
+      },
+    },
+  },
+
   head: {
     link: [
       {
