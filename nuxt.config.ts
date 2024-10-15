@@ -2,8 +2,8 @@ import { siteQuery } from './queries'
 import process from 'node:process'
 
 export default defineNuxtConfig({
-  modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image'],
-  // ssr: false,
+  modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image', '@nuxtjs/sitemap'],
+  ssr: true,
   // target: 'server',
   site: {
     url: 'simonguitet.com',
@@ -52,7 +52,13 @@ export default defineNuxtConfig({
       kirbySite: siteQuery,
     },
   },
-
+  sitemap: {
+    hostname: 'https://simonguittet.com',
+    // routes: async () => {
+    //   const { data } = await axios.get('https://tondomaine.com/api/routes');
+    //   return data.map(route => `/pages/${route.slug}`);
+    // }
+  },
   nitro: {
     prerender: {
       routes: ['/', 'photography', 'photography/**'],
