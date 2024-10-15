@@ -69,109 +69,116 @@ export default defineNuxtConfig({
   //     return response.result.map((page) => `/${page.slug}`)
   //   },
   // },
+
   nitro: {
-    nitro: {
-      prerender: {
-        routes: async () => {
-          const { $kql } = useNuxtApp()
-          try {
-            const photographyPages = await $kql({
-              query: 'page("photography").children.listed',
-              select: {
-                id: true,
-              },
-            })
+    prerender: {
+      routes: async () => {
+        const { $kql } = useNuxtApp()
 
-            if (
-              !photographyPages.result ||
-              !Array.isArray(photographyPages.result)
-            ) {
-              return ['/', '/photography'] // Retour par défaut si la requête échoue
-            }
+        try {
+          // Récupérer les enfants de "photography"
+          const response = await $kql({
+            query: 'page("photography").children.listed',
+            select: {
+              id: true,
+            },
+          })
 
-            return [
-              '/',
-              '/photography',
-              ...photographyPages.result.map(
-                (page) => `/photography/${page.id}`,
-              ),
-            ]
-          } catch (error) {
-            console.error(
-              'Erreur lors de la récupération des pages de photographie:',
-              error,
+          // Vérification que le résultat est bien un tableau
+          if (!response?.result || !Array.isArray(response.result)) {
+            console.warn(
+              'Les résultats KQL ne sont pas valides ou pas un tableau',
+              response?.result,
             )
-            return ['/'] // Retourner la page principale par défaut si une erreur survient
+            return ['/'] // Si la requête échoue, retourner au moins la route '/'
           }
-        },
+
+          // Générer les routes à partir des IDs (ajout du '/' devant)
+          const projectRoutes = response.result.map(
+            (project) => `/${project.id}`,
+          )
+
+          // Retourner les routes sous forme de tableau (ajouter '/' et '/photography')
+          return ['/', '/photography', ...projectRoutes]
+        } catch (error) {
+          console.error('Erreur lors de la récupération des projets :', error)
+          return ['/'] // En cas d'erreur, retourner une route par défaut
+        }
       },
     },
+  },
+
+  routeRules: {
+    '/**': { prerender: true },
+    '/photography/**': { prerender: true },
+    '/photography/cotes-de-porc': { prerender: false },
+    '/photography/varda': { prerender: false },
   },
 
   generate: {
     fallback: true,
   },
-  hooks: {
-    'render:route': async (url, result, context) => {
-      if (url === '/') {
-        const { $kql } = context.nuxtApp
-        const carrouselData = await $kql({
-          query: 'page("home").files.sortBy("sort", "asc")',
-          select: {
-            url: true,
-            alt: true,
-          },
-        })
+  // hooks: {
+  //   'render:route': async (url, result, context) => {
+  //     if (url === '/') {
+  //       const { $kql } = context.nuxtApp
+  //       const carrouselData = await $kql({
+  //         query: 'page("home").files.sortBy("sort", "asc")',
+  //         select: {
+  //           url: true,
+  //           alt: true,
+  //         },
+  //       })
 
-        // Boucle sur les images récupérées et ajoute-les dans le head
-        const images = carrouselData.result || []
-        const preloadLinks = images.map((image) => ({
-          rel: 'preload',
-          href: image.url,
-          as: 'image',
-        }))
+  //       // Boucle sur les images récupérées et ajoute-les dans le head
+  //       const images = carrouselData.result || []
+  //       const preloadLinks = images.map((image) => ({
+  //         rel: 'preload',
+  //         href: image.url,
+  //         as: 'image',
+  //       }))
 
-        // Injecter dynamiquement les liens dans le head
-        result.meta.push({
-          link: preloadLinks,
-        })
-      }
-      if (url === '/photography') {
-        const { $kql } = context.nuxtApp
+  //       // Injecter dynamiquement les liens dans le head
+  //       result.meta.push({
+  //         link: preloadLinks,
+  //       })
+  //     }
+  //     if (url === '/photography') {
+  //       const { $kql } = context.nuxtApp
 
-        // Récupération des images de couverture via la requête KQL
-        const { result: pageData } = await $kql({
-          query: 'page("photography").children.listed',
-          select: {
-            cover: {
-              query: 'page.content.cover.toFile',
-              select: {
-                url: true,
-                alt: true,
-              },
-            },
-          },
-        })
+  //       // Récupération des images de couverture via la requête KQL
+  //       const { result: pageData } = await $kql({
+  //         query: 'page("photography").children.listed',
+  //         select: {
+  //           cover: {
+  //             query: 'page.content.cover.toFile',
+  //             select: {
+  //               url: true,
+  //               alt: true,
+  //             },
+  //           },
+  //         },
+  //       })
 
-        // Récupérer toutes les images de couverture
-        const covers = pageData
-          .map((project) => project.cover)
-          .filter((cover) => cover?.url)
+  //       // Récupérer toutes les images de couverture
+  //       const covers = pageData
+  //         .map((project) => project.cover)
+  //         .filter((cover) => cover?.url)
 
-        // Créer les balises de préchargement pour les images
-        const preloadLinks = covers.map((cover) => ({
-          rel: 'preload',
-          href: cover.url,
-          as: 'image',
-        }))
+  //       // Créer les balises de préchargement pour les images
+  //       const preloadLinks = covers.map((cover) => ({
+  //         rel: 'preload',
+  //         href: cover.url,
+  //         as: 'image',
+  //       }))
 
-        // Injecter les balises de préchargement dans le head
-        result.meta.push({
-          link: preloadLinks,
-        })
-      }
-    },
-  },
+  //       // Injecter les balises de préchargement dans le head
+  //       result.meta.push({
+  //         link: preloadLinks,
+  //       })
+  //     }
+  //   },
+  // },
 
   scripts: {
     registry: {

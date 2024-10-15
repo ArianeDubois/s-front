@@ -320,8 +320,8 @@ onBeforeRouteLeave((to, from, next) => {
       <li v-for="(project, index) in reorderedProjects" :key="index" :data-slug="`${project.id.split('/')[1]}`"
         :data-tags="project.tags"
         :class="['project', { clone: project.isClone, 'pointer-events-none': project.isClone }]">
-
-        <NuxtLink :to="`/${project.id}`">
+{{project.id}}
+        <!-- <NuxtLink :to="`/${project.id}`">
           <figure ref="imageWrapper"
             :style="`width: 100%; position: relative;padding-top: ${project?.image?.height / project?.image?.width * 100}%`">
             <ElementLazyImage v-if="project.isClone" :is-preload="false" :is-loading="true" ref="lazyImage"
@@ -345,7 +345,7 @@ onBeforeRouteLeave((to, from, next) => {
               </div>
             </figcaption>
           </figure>
-        </NuxtLink>
+        </NuxtLink> -->
       </li>
     </ul>
 
