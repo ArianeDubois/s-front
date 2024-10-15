@@ -30,7 +30,7 @@ export default defineNuxtConfig({
     provider: 'ipx',
     ipx: {
       fetchOptions: {
-        timeout: 150, // Augmente le délai à 15 secondes
+        timeout: 1500, // Augmente le délai à 15 secondes
       },
     },
   },
