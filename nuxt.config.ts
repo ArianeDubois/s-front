@@ -2,7 +2,7 @@ import { siteQuery } from './queries'
 import process from 'node:process'
 
 export default defineNuxtConfig({
-  modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image', '@nuxtjs/sitemap'],
+  modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image'],
   buildModules: ['@nuxt/image'],
 
   ssr: true,
@@ -30,7 +30,6 @@ export default defineNuxtConfig({
     lazy: true,
   },
   // plugins: ['~/plugins/gsap.js'],
-  plugins: ['~/plugins/gtm.js'],
   gsap: {
     extraPlugins: {
       scrollTrigger: true,
@@ -55,29 +54,67 @@ export default defineNuxtConfig({
       kirbySite: siteQuery,
     },
   },
-  sitemap: {
-    hostname: 'https://simonguittet.com',
-    routes: async () => {
-      const { $kql } = useNuxtApp()
-      const response = await $kql({
-        query: 'site.index',
-        select: {
-          slug: true,
-        },
-      })
+  // sitemap: {
+  //   hostname: 'https://simonguittet.com',
+  //   routes: async () => {
+  //     const { $kql } = useNuxtApp()
+  //     const response = await $kql({
+  //       query: 'site.index',
+  //       select: {
+  //         slug: true,
+  //       },
+  //     })
 
-      // Map the response to create the routes for the sitemap
-      return response.result.map((page) => `/${page.slug}`)
-    },
-  },
+  //     // Map the response to create the routes for the sitemap
+  //     return response.result.map((page) => `/${page.slug}`)
+  //   },
+  // },
   nitro: {
-    prerender: {
-      routes: ['/', 'photography', 'photography/**'],
-    },
-    compressPublicAssets: {
-      gzip: true,
+    nitro: {
+      prerender: {
+        routes: async () => {
+          const { $kql } = useNuxtApp()
+          try {
+            // Récupérer toutes les pages de photographie via KQL
+            const photographyPages = await $kql({
+              query: 'page("photography").children.listed',
+              select: {
+                slug: true,
+              },
+            })
+
+            // Assurer que photographyPages.result est défini et est un tableau
+            if (
+              !photographyPages.result ||
+              !Array.isArray(photographyPages.result)
+            ) {
+              console.warn(
+                'Les résultats KQL ne sont pas un tableau valide',
+                photographyPages.result,
+              )
+              return ['/'] // Retour par défaut si la requête échoue
+            }
+
+            // Générer les routes à partir des slugs
+            return [
+              '/',
+              '/photography',
+              ...photographyPages.result.map(
+                (page) => `/photography/${page.slug}`,
+              ),
+            ]
+          } catch (error) {
+            console.error(
+              'Erreur lors de la récupération des pages de photographie:',
+              error,
+            )
+            return ['/'] // Retourner la page principale par défaut si une erreur survient
+          }
+        },
+      },
     },
   },
+
   generate: {
     fallback: true,
   },
@@ -155,6 +192,21 @@ export default defineNuxtConfig({
   },
 
   head: {
+    script: [
+      {
+        hid: 'gtm',
+        innerHTML: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-5DLGB6XV');`,
+        type: 'text/javascript',
+        charset: 'utf-8',
+      },
+    ],
+    __dangerouslyDisableSanitizersByTagID: {
+      gtm: ['innerHTML'],
+    },
     link: [
       {
         rel: 'preload',
