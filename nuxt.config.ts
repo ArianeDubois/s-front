@@ -72,47 +72,16 @@ export default defineNuxtConfig({
 
   nitro: {
     prerender: {
-      routes: async () => {
-        const { $kql } = useNuxtApp()
-
-        try {
-          // Récupérer les enfants de "photography"
-          const response = await $kql({
-            query: 'page("photography").children.listed',
-            select: {
-              id: true,
-            },
-          })
-
-          // Vérification que le résultat est bien un tableau
-          if (!response?.result || !Array.isArray(response.result)) {
-            console.warn(
-              'Les résultats KQL ne sont pas valides ou pas un tableau',
-              response?.result,
-            )
-            return ['/'] // Si la requête échoue, retourner au moins la route '/'
-          }
-
-          // Générer les routes à partir des IDs (ajout du '/' devant)
-          const projectRoutes = response.result.map(
-            (project) => `/${project.id}`,
-          )
-
-          // Retourner les routes sous forme de tableau (ajouter '/' et '/photography')
-          return ['/', '/photography', ...projectRoutes]
-        } catch (error) {
-          console.error('Erreur lors de la récupération des projets :', error)
-          return ['/'] // En cas d'erreur, retourner une route par défaut
-        }
-      },
+      routes: ['/', '/photography'],
     },
   },
 
   routeRules: {
     '/**': { prerender: true },
-    '/photography/**': { prerender: true },
+    // '/photography/**': { prerender: true },
     '/photography/cotes-de-porc': { prerender: false },
     '/photography/varda': { prerender: false },
+    '/photography/planche-sucree': { prerender: false },
   },
 
   generate: {
