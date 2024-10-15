@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image'],
   buildModules: ['@nuxt/image'],
 
-  // ssr: true,
+  ssr: true,
   // target: 'server',
   site: {
     url: 'simonguitet.com',
