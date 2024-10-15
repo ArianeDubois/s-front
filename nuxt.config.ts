@@ -75,32 +75,25 @@ export default defineNuxtConfig({
         routes: async () => {
           const { $kql } = useNuxtApp()
           try {
-            // Récupérer toutes les pages de photographie via KQL
             const photographyPages = await $kql({
               query: 'page("photography").children.listed',
               select: {
-                slug: true,
+                id: true,
               },
             })
 
-            // Assurer que photographyPages.result est défini et est un tableau
             if (
               !photographyPages.result ||
               !Array.isArray(photographyPages.result)
             ) {
-              console.warn(
-                'Les résultats KQL ne sont pas un tableau valide',
-                photographyPages.result,
-              )
-              return ['/'] // Retour par défaut si la requête échoue
+              return ['/', '/photography'] // Retour par défaut si la requête échoue
             }
 
-            // Générer les routes à partir des slugs
             return [
               '/',
               '/photography',
               ...photographyPages.result.map(
-                (page) => `/photography/${page.slug}`,
+                (page) => `/photography/${page.id}`,
               ),
             ]
           } catch (error) {
