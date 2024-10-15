@@ -19,8 +19,8 @@
     Cache-Control = "max-age=31536000, immutable"
 
 [build]
-  publish = "dist"
-  command = "pnpm run build"
+  publish = ".output/public"
+  command = "pnpm run generate"
 
 [[redirects]]
   from = "/*"
