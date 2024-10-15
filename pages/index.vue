@@ -117,7 +117,7 @@ const animateLoadingImages = () => {
   });
 };
 
-const colors = ["#FCDA52", "#8c03fc", "#FE6000", "#9F91C7", "#5EC76A", "#8ae6f2", "#ff0a64"];
+const colors = ["#8c03fc", "#FE6000", "#9F91C7", "#5EC76A", "#8ae6f2", "#ff0a64"];
 const getRandomColor = () => {
   const randomIndex = Math.floor(Math.random() * colors.length);
   return colors[randomIndex];

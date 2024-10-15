@@ -16,7 +16,6 @@ export default defineNuxtConfig({
   image: {
     // domains: ['http://s-back.test'],
     domains: ['preprod.arianedubois.fr'],
-
     screens: {
       xs: 320,
       sm: 640,
@@ -28,6 +27,12 @@ export default defineNuxtConfig({
     },
     formats: ['image/webp', 'image/jpeg'],
     lazy: true,
+    provider: 'ipx',
+    ipx: {
+      fetchOptions: {
+        timeout: 150, // Augmente le délai à 15 secondes
+      },
+    },
   },
   // plugins: ['~/plugins/gsap.js'],
   gsap: {
@@ -78,7 +83,6 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/**': { prerender: true },
-    // '/photography/**': { prerender: true },
     '/photography/cotes-de-porc': { prerender: false },
     '/photography/varda': { prerender: false },
     '/photography/planche-sucree': { prerender: false },
