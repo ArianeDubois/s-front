@@ -79,6 +79,9 @@ export default defineNuxtConfig({
     prerender: {
       routes: ['/', '/photography'],
     },
+    output: {
+      publicDir: 'dist', // Forcer la génération dans le dossier dist
+    },
   },
 
   routeRules: {
@@ -91,6 +94,7 @@ export default defineNuxtConfig({
   generate: {
     fallback: true,
   },
+  //PRELOADS
   // hooks: {
   //   'render:route': async (url, result, context) => {
   //     if (url === '/') {
