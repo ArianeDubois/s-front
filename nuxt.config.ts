@@ -3,6 +3,8 @@ import process from 'node:process'
 
 export default defineNuxtConfig({
   modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image', '@nuxtjs/sitemap'],
+  buildModules: ['@nuxt/image'],
+
   ssr: true,
   // target: 'server',
   site: {
@@ -28,6 +30,7 @@ export default defineNuxtConfig({
     lazy: true,
   },
   // plugins: ['~/plugins/gsap.js'],
+  plugins: ['~/plugins/gtm.js'],
   gsap: {
     extraPlugins: {
       scrollTrigger: true,
@@ -54,10 +57,18 @@ export default defineNuxtConfig({
   },
   sitemap: {
     hostname: 'https://simonguittet.com',
-    // routes: async () => {
-    //   const { data } = await axios.get('https://tondomaine.com/api/routes');
-    //   return data.map(route => `/pages/${route.slug}`);
-    // }
+    routes: async () => {
+      const { $kql } = useNuxtApp()
+      const response = await $kql({
+        query: 'site.index',
+        select: {
+          slug: true,
+        },
+      })
+
+      // Map the response to create the routes for the sitemap
+      return response.result.map((page) => `/${page.slug}`)
+    },
   },
   nitro: {
     prerender: {
