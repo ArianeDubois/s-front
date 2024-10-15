@@ -26,13 +26,12 @@ export default defineNuxtConfig({
       '2xl': 1536,
     },
     formats: ['image/webp', 'image/jpeg'],
-    lazy: true,
-    // provider: 'ipx',
-    // ipx: {
-    //   fetchOptions: {
-    //     timeout: 1500, // Augmente le délai à 15 secondes
-    //   },
-    // },
+    provider: 'ipx',
+    ipx: {
+      fetchOptions: {
+        timeout: 1500, // Augmente le délai à 15 secondes
+      },
+    },
   },
   // plugins: ['~/plugins/gsap.js'],
   gsap: {
