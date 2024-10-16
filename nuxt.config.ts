@@ -29,7 +29,7 @@ export default defineNuxtConfig({
     provider: 'ipx',
     ipx: {
       fetchOptions: {
-        timeout: 1500, // Augmente le délai à 15 secondes
+        timeout: 15000, // Augmente le délai à 15 secondes
       },
     },
   },
@@ -76,6 +76,8 @@ export default defineNuxtConfig({
 
   nitro: {
     prerender: {
+      crawlLinks: true,
+      failOnError: false,
       routes: ['/', '/photography'],
     },
     output: {
@@ -85,76 +87,78 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/**': { prerender: true },
-    '/photography/cotes-de-porc': { prerender: false },
-    '/photography/varda': { prerender: false },
-    '/photography/planche-sucree': { prerender: false },
+    '/photography/**': { prerender: true },
+    '/photography': { prerender: true },
+    // '/photography/cotes-de-porc': { prerender: false },
+    // '/photography/varda': { prerender: false },
+    // '/photography/planche-sucree': { prerender: false },
   },
 
   generate: {
     fallback: true,
   },
   //PRELOADS
-  // hooks: {
-  //   'render:route': async (url, result, context) => {
-  //     if (url === '/') {
-  //       const { $kql } = context.nuxtApp
-  //       const carrouselData = await $kql({
-  //         query: 'page("home").files.sortBy("sort", "asc")',
-  //         select: {
-  //           url: true,
-  //           alt: true,
-  //         },
-  //       })
+  hooks: {
+    'render:route': async (url, result, context) => {
+      if (url === '/') {
+        const { $kql } = context.nuxtApp
+        const carrouselData = await $kql({
+          query: 'page("home").files.sortBy("sort", "asc")',
+          select: {
+            url: true,
+            alt: true,
+          },
+        })
 
-  //       // Boucle sur les images récupérées et ajoute-les dans le head
-  //       const images = carrouselData.result || []
-  //       const preloadLinks = images.map((image) => ({
-  //         rel: 'preload',
-  //         href: image.url,
-  //         as: 'image',
-  //       }))
+        // Boucle sur les images récupérées et ajoute-les dans le head
+        const images = carrouselData.result || []
+        const preloadLinks = images.map((image) => ({
+          rel: 'preload',
+          href: image.url,
+          as: 'image',
+        }))
 
-  //       // Injecter dynamiquement les liens dans le head
-  //       result.meta.push({
-  //         link: preloadLinks,
-  //       })
-  //     }
-  //     if (url === '/photography') {
-  //       const { $kql } = context.nuxtApp
+        // Injecter dynamiquement les liens dans le head
+        result.meta.push({
+          link: preloadLinks,
+        })
+      }
+      if (url === '/photography') {
+        const { $kql } = context.nuxtApp
 
-  //       // Récupération des images de couverture via la requête KQL
-  //       const { result: pageData } = await $kql({
-  //         query: 'page("photography").children.listed',
-  //         select: {
-  //           cover: {
-  //             query: 'page.content.cover.toFile',
-  //             select: {
-  //               url: true,
-  //               alt: true,
-  //             },
-  //           },
-  //         },
-  //       })
+        // Récupération des images de couverture via la requête KQL
+        const { result: pageData } = await $kql({
+          query: 'page("photography").children.listed',
+          select: {
+            cover: {
+              query: 'page.content.cover.toFile',
+              select: {
+                url: true,
+                alt: true,
+              },
+            },
+          },
+        })
 
-  //       // Récupérer toutes les images de couverture
-  //       const covers = pageData
-  //         .map((project) => project.cover)
-  //         .filter((cover) => cover?.url)
+        // Récupérer toutes les images de couverture
+        const covers = pageData
+          .map((project) => project.cover)
+          .filter((cover) => cover?.url)
 
-  //       // Créer les balises de préchargement pour les images
-  //       const preloadLinks = covers.map((cover) => ({
-  //         rel: 'preload',
-  //         href: cover.url,
-  //         as: 'image',
-  //       }))
+        // Créer les balises de préchargement pour les images
+        const preloadLinks = covers.map((cover) => ({
+          rel: 'preload',
+          href: cover.url,
+          as: 'image',
+        }))
 
-  //       // Injecter les balises de préchargement dans le head
-  //       result.meta.push({
-  //         link: preloadLinks,
-  //       })
-  //     }
-  //   },
-  // },
+        // Injecter les balises de préchargement dans le head
+        result.meta.push({
+          link: preloadLinks,
+        })
+      }
+    },
+  },
 
   scripts: {
     registry: {
