@@ -70,9 +70,9 @@ export default defineNuxtConfig({
       failOnError: false,
       routes: ['/photography', '/'],
     },
-    output: {
-      publicDir: 'dist',
-    },
+    // output: {
+    //   publicDir: 'dist',
+    // },
   },
 
   routeRules: {

@@ -324,36 +324,10 @@ onBeforeRouteLeave((to, from, next) => {
         <NuxtLink :to="`/${project.id}`">
           <figure ref="imageWrapper"
             :style="`width: 100%; position: relative;padding-top: ${project?.cover?.height / project?.cover?.width * 100}%`">
-            <!-- <ElementLazyImage ref="lazyImage" :is-loading="true" :is-preload="true" :width="'100%'" :height="'100%'"
+            <ElementLazyImage ref="lazyImage" :is-loading="true" :is-preload="true" :width="'100%'" :height="'100%'"
               :src="project?.cover?.url ?? project?.images?.[0].url" :lowQualitySrc="project?.cover?.url"
               :alt="project?.cover?.alt ?? project?.images?.[0]?.alt"
-              :sizes="'25vw sm: 25vw md: 30vw lg: 30vw xl: 30vw'" /> -->
-            <!-- <div class="lazy-image">
-              <NuxtImg ref="imageRef" :src="src" :alt="alt" class="high-quality" :class="{ 'loaded': loaded }"
-                @load="onLoad" format="webp" :width="width" :height="height" quality="80" :sizes="sizes"
-                :loading="isLoading ? 'lazy' : 'eager'" :preload="isPreload" />
-              <NuxtImg ref="lowQualityImageRef" :src="lowQualitySrc" :alt="alt" :style="{ 'opacity: 0': loaded }"
-                class="low-quality" @load="onLowQualityLoad" format="webp" :width="auto" :height="auto" quality="10"
-                sizes="xs:10px" :preload="isPreload" />
-            </div> -->
-
-            <div class="lazy-image" ref="lazyImage">
-              <img :src="project?.cover?.url" :alt="project?.cover?.alt ?? project?.images?.[0]?.alt" loading="lazy"
-                :srcset="`
-                ${project?.cover?.url}?w=320 320w,
-                ${project?.cover?.url}?w=640 640w,
-                ${project?.cover?.url}?w=768 768w,
-                ${project?.cover?.url}?w=1024 1024w,
-                ${project?.cover?.url}?w=1280 1280w,
-                ${project?.cover?.url}?w=1536 1536w
-              `" sizes="(max-width: 640px) 20vw, (min-width: 641px) 25vw" style="width: 100%; height: auto;" />
-            </div>
-
-
-            <!-- <ElementLazyImage v-else :is-preload="false" :is-loading="true" ref="lazyImage"
-              :height="project.cover.height" :width="project.cover.width"
-              :src="project?.cover?.url ?? project?.images?.[0].url" :lowQualitySrc="project?.cover?.url"
-              :alt="project?.cover?.alt ?? project?.images?.[0]?.alt" :sizes="'25vw sm:25vw md:30vw lg:30vw xl:30vw'" /> -->
+              :sizes="'25vw sm: 25vw md: 30vw lg: 30vw xl: 30vw'" />
 
 
             <figcaption class="caption" :style='{ color: project.color }'>
