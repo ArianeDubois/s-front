@@ -41,27 +41,27 @@ export default defineNuxtConfig({
       kirbySite: siteQuery,
     },
   },
-  // sitemap: {
-  //   hostname: 'https://simonguittet.com',
-  //   routes: async () => {
-  //     const { $kql } = useNuxtApp()
-  //     const response = await $kql({
-  //       query: 'site.index',
-  //       select: {
-  //         slug: true,
-  //       },
-  //     })
+  sitemap: {
+    hostname: 'https://simonguittet.com',
+    routes: async () => {
+      const { $kql } = useNuxtApp()
+      const response = await $kql({
+        query: 'site.index',
+        select: {
+          id: true,
+        },
+      })
 
-  //     // Map the response to create the routes for the sitemap
-  //     return response.result.map((page) => `/${page.id}`)
-  //   },
-  // },
+      // Map the response to create the routes for the sitemap
+      return response.result.map((page) => `/${page.id}`)
+    },
+  },
 
   nitro: {
     prerender: {
       crawlLinks: true,
       failOnError: false,
-      routes: ['/photography', '/'],
+      routes: ['/photography', '/photography/'],
       concurrency: 2, // Limite la concurrence pour éviter des surcharges.
       timeout: 60000, // Temps d'attente maximum pour chaque page (60s).
     },
@@ -149,21 +149,6 @@ export default defineNuxtConfig({
   },
 
   head: {
-    script: [
-      {
-        hid: 'gtm',
-        innerHTML: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','GTM-5DLGB6XV');`,
-        type: 'text/javascript',
-        charset: 'utf-8',
-      },
-    ],
-    __dangerouslyDisableSanitizersByTagID: {
-      gtm: ['innerHTML'],
-    },
     link: [
       {
         rel: 'preload',

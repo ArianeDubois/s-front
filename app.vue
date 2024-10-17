@@ -32,6 +32,7 @@ useSeoMeta({
   ogDescription: `${seo?.meta_description}`,
   ogImage: 'https://example.com/image.png',
   twitterCard: 'summary_large_image',
+  robots: "index, follow"
 })
 </script>
 
@@ -53,5 +54,11 @@ useSeoMeta({
 </template>
 
 <style>
-/* Styles personnalisés */
+html {
+  scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
 </style>

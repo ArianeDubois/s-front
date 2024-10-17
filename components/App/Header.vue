@@ -12,6 +12,7 @@ const { data: aboutData } = await useKql({
     address: true,
     email: true,
     phone: true,
+    description: true,
     social: {
       platform: true,
       url: true,
@@ -51,16 +52,19 @@ const toggleAbout = () => {
 
 
 
-  <div :style="{ opacity: showAbout ? 0.8 : 0, pointerEvents: showAbout ? 'auto' : 'none' }" class="about-overlay "
-    @click="toggleAbout">
+  <div :style="{ opacity: showAbout ? 0.9 : 0, pointerEvents: showAbout ? 'auto' : 'none' }" class="about-overlay "
+    @click.self="toggleAbout">
+
+    <div class="icon">
+      <ElementIconPiment />
+    </div>
+
     <div class="about-content">
-      <div class="col">
-        <p>Simon Guittet</p>
-        <div v-html="about.address"></div>
-      </div>
+
+      <div class="col" v-html="about.address"></div>
+
 
       <div class="col">
-        <p>Contact</p>
         <div>
           <div v-html="about.email"></div>
           <div v-html="about.phone"></div>
@@ -72,6 +76,12 @@ const toggleAbout = () => {
         <p>@lacuisineduzin</p>
       </div>
     </div>
+
+    <div class="description">
+      <div v-html="about.description"></div>
+    </div>
+
+
   </div>
 </template>
 
@@ -125,18 +135,32 @@ button {
   right: 0;
   bottom: 0;
   background: white;
-  opacity: 0.8;
   z-index: 100;
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
   transition: opacity 0.3s ease;
+}
+
+.description {
+  text-align: center;
+  font-size: var(--font-big);
+  max-width: 80%;
+  color: inherit !important;
+}
+
+.icon {
+  color: inherit !important;
+
 }
 
 @media screen and (max-width: 720px) {
   .about-content {
     font-size: var(--font-base-xs);
   }
+
+
 }
 
 .about-content {
@@ -147,15 +171,29 @@ button {
   text-transform: uppercase;
   display: flex;
   justify-content: space-around;
-
+  gap: 30px;
 }
 
-@media screen and (max-width: 720px) {
+@media screen and (max-width: 1256px) {
+  .about-content {
+    justify-content: space-between;
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .about-overlay .is-active {
+    justify-content: center;
+  }
+
+  .about-overlay {
+    gap: 30px;
+  }
+
   .about-content {
     flex-direction: column;
     align-items: center;
-    justify-content: space-around;
-    height: 100%;
+    justify-content: center;
   }
 
   .col {
@@ -163,10 +201,14 @@ button {
     text-align: center !important;
     align-items: center !important;
   }
+
+  .description {
+    font-size: var(--font-base);
+  }
 }
 
 .about-overlay .is-active {
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .overlay-bg {
@@ -176,13 +218,19 @@ button {
   z-index: 30;
 }
 
+@media screen and (min-width: 850px) {
+  .col {
+    gap: 10px;
+  }
+}
+
 .col {
   display: flex;
   align-items: start;
-  gap: 10px;
-  text-align: left;
+  text-align: center;
   color: inherit !important;
 }
+
 
 .col p {
   display: block;

@@ -205,8 +205,8 @@ onMounted(() => {
           <ElementIconPiment />
         </li>
         <li class="value title">
-          <div>{{ page.title }}</div>
-          <div class="key">Titre <br />du projet</div>
+          <div>{{ page.title }} </div>
+          <div class="key">Titre <br />du projet </div>
         </li>
 
         <li v-if="page.credit" class="value">
@@ -232,6 +232,14 @@ onMounted(() => {
 </template>
 
 <style scoped>
+html {
+  scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
 .album-gallery {
   margin: 0 100px;
   display: flex;
