@@ -69,10 +69,12 @@ export default defineNuxtConfig({
       crawlLinks: true,
       failOnError: false,
       routes: ['/photography', '/'],
+      concurrency: 2, // Limite la concurrence pour éviter des surcharges.
+      timeout: 60000, // Temps d'attente maximum pour chaque page (60s).
     },
-    // output: {
-    //   publicDir: 'dist',
-    // },
+    output: {
+      publicDir: 'dist',
+    },
   },
 
   routeRules: {
@@ -105,7 +107,6 @@ export default defineNuxtConfig({
           as: 'image',
         }))
 
-        // Injecter dynamiquement les liens dans le head
         result.meta.push({
           link: preloadLinks,
         })
@@ -113,7 +114,6 @@ export default defineNuxtConfig({
       if (url === '/photography') {
         const { $kql } = context.nuxtApp
 
-        // Récupération des images de couverture via la requête KQL
         const { result: pageData } = await $kql({
           query: 'page("photography").children.listed',
           select: {
@@ -127,19 +127,16 @@ export default defineNuxtConfig({
           },
         })
 
-        // Récupérer toutes les images de couverture
         const covers = pageData
           .map((project) => project.cover)
           .filter((cover) => cover?.url)
 
-        // Créer les balises de préchargement pour les images
         const preloadLinks = covers.map((cover) => ({
           rel: 'preload',
           href: cover.url,
           as: 'image',
         }))
 
-        // Injecter les balises de préchargement dans le head
         result.meta.push({
           link: preloadLinks,
         })
