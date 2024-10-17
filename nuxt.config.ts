@@ -3,9 +3,8 @@ import process from 'node:process'
 
 export default defineNuxtConfig({
   modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image'],
-  buildModules: ['@nuxt/image'],
 
-  // ssr: true,
+  ssr: true,
   // target: 'server',
   site: {
     url: 'simonguitet.com',
@@ -14,7 +13,6 @@ export default defineNuxtConfig({
     defaultLocale: 'en', // not needed if you have @nuxtjs/i18n installed
   },
   image: {
-    // domains: ['http://s-back.test'],
     domains: ['preprod.arianedubois.fr'],
     screens: {
       xs: 320,
@@ -25,13 +23,7 @@ export default defineNuxtConfig({
       xxl: 1536,
       '2xl': 1536,
     },
-    formats: ['image/webp', 'image/jpeg'],
-    provider: 'ipx',
-    ipx: {
-      fetchOptions: {
-        timeout: 1500, // Augmente le délai à 15 secondes
-      },
-    },
+    formats: ['image/webp', 'image/jpeg', 'image/jpg'],
   },
   // plugins: ['~/plugins/gsap.js'],
   gsap: {
@@ -43,9 +35,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      siteUrl:
-        process.env.KIRBY_BASE_URL ||
-        'http://preprod.arianedubois.fr/s-back/public',
+      siteUrl: 'http://preprod.arianedubois.fr/s-back/public',
     },
   },
 
@@ -70,91 +60,92 @@ export default defineNuxtConfig({
   //     })
 
   //     // Map the response to create the routes for the sitemap
-  //     return response.result.map((page) => `/${page.slug}`)
+  //     return response.result.map((page) => `/${page.id}`)
   //   },
   // },
 
   nitro: {
     prerender: {
-      routes: ['/', '/photography'],
+      crawlLinks: true,
+      failOnError: false,
+      routes: ['/photography', '/'],
     },
     output: {
-      publicDir: 'dist', // Forcer la génération dans le dossier dist
+      publicDir: 'dist',
     },
   },
 
   routeRules: {
     '/**': { prerender: true },
-    '/photography/cotes-de-porc': { prerender: false },
-    '/photography/varda': { prerender: false },
-    '/photography/planche-sucree': { prerender: false },
+    '/photography/**': { prerender: true },
+    '/photography': { prerender: true },
   },
 
   generate: {
     fallback: true,
   },
   //PRELOADS
-  // hooks: {
-  //   'render:route': async (url, result, context) => {
-  //     if (url === '/') {
-  //       const { $kql } = context.nuxtApp
-  //       const carrouselData = await $kql({
-  //         query: 'page("home").files.sortBy("sort", "asc")',
-  //         select: {
-  //           url: true,
-  //           alt: true,
-  //         },
-  //       })
+  hooks: {
+    'render:route': async (url, result, context) => {
+      if (url === '/') {
+        const { $kql } = context.nuxtApp
+        const carrouselData = await $kql({
+          query: 'page("home").files.sortBy("sort", "asc")',
+          select: {
+            url: true,
+            alt: true,
+          },
+        })
 
-  //       // Boucle sur les images récupérées et ajoute-les dans le head
-  //       const images = carrouselData.result || []
-  //       const preloadLinks = images.map((image) => ({
-  //         rel: 'preload',
-  //         href: image.url,
-  //         as: 'image',
-  //       }))
+        // Boucle sur les images récupérées et ajoute-les dans le head
+        const images = carrouselData.result || []
+        const preloadLinks = images.map((image) => ({
+          rel: 'preload',
+          href: image.url,
+          as: 'image',
+        }))
 
-  //       // Injecter dynamiquement les liens dans le head
-  //       result.meta.push({
-  //         link: preloadLinks,
-  //       })
-  //     }
-  //     if (url === '/photography') {
-  //       const { $kql } = context.nuxtApp
+        // Injecter dynamiquement les liens dans le head
+        result.meta.push({
+          link: preloadLinks,
+        })
+      }
+      if (url === '/photography') {
+        const { $kql } = context.nuxtApp
 
-  //       // Récupération des images de couverture via la requête KQL
-  //       const { result: pageData } = await $kql({
-  //         query: 'page("photography").children.listed',
-  //         select: {
-  //           cover: {
-  //             query: 'page.content.cover.toFile',
-  //             select: {
-  //               url: true,
-  //               alt: true,
-  //             },
-  //           },
-  //         },
-  //       })
+        // Récupération des images de couverture via la requête KQL
+        const { result: pageData } = await $kql({
+          query: 'page("photography").children.listed',
+          select: {
+            cover: {
+              query: 'page.content.cover.toFile',
+              select: {
+                url: true,
+                alt: true,
+              },
+            },
+          },
+        })
 
-  //       // Récupérer toutes les images de couverture
-  //       const covers = pageData
-  //         .map((project) => project.cover)
-  //         .filter((cover) => cover?.url)
+        // Récupérer toutes les images de couverture
+        const covers = pageData
+          .map((project) => project.cover)
+          .filter((cover) => cover?.url)
 
-  //       // Créer les balises de préchargement pour les images
-  //       const preloadLinks = covers.map((cover) => ({
-  //         rel: 'preload',
-  //         href: cover.url,
-  //         as: 'image',
-  //       }))
+        // Créer les balises de préchargement pour les images
+        const preloadLinks = covers.map((cover) => ({
+          rel: 'preload',
+          href: cover.url,
+          as: 'image',
+        }))
 
-  //       // Injecter les balises de préchargement dans le head
-  //       result.meta.push({
-  //         link: preloadLinks,
-  //       })
-  //     }
-  //   },
-  // },
+        // Injecter les balises de préchargement dans le head
+        result.meta.push({
+          link: preloadLinks,
+        })
+      }
+    },
+  },
 
   scripts: {
     registry: {

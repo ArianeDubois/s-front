@@ -9,7 +9,9 @@ const props = defineProps({
   alt: String,
   sizes: String,
   isLoading: Boolean,
-  isPreload: Boolean
+  isPreload: Boolean,
+  width: String,
+  height: String
 });
 
 const loaded = ref(false);
@@ -39,17 +41,17 @@ onMounted(() => {
 <template>
   <div class="lazy-image">
     <NuxtImg ref="imageRef" :src="src" :alt="alt" class="high-quality" :class="{ 'loaded': loaded }" @load="onLoad"
-      format="webp" width="auto" height="auto" quality="80" :sizes="sizes" :loading="isLoading ? 'lazy' : 'eager'"
+      format="webp" :width="width" :height="height" quality="80" :sizes="sizes" :loading="isLoading ? 'lazy' : 'eager'"
       :preload="isPreload" />
     <NuxtImg ref="lowQualityImageRef" :src="lowQualitySrc" :alt="alt" :style="{ 'opacity: 0': loaded }"
-      class="low-quality" @load="onLowQualityLoad" format="webp" width="auto" height="auto" quality="10" sizes="xs:10px"
-      :preload="isPreload" />
+      class="low-quality" @load="onLowQualityLoad" format="webp" :width="auto" :height="auto" quality="10"
+      sizes="xs:10px" :preload="isPreload" />
   </div>
 </template>
 
 
 
-<style scoped>
+<style>
 .loading-screen .low-quality,
 .loading-screen .high-quality {
   object-fit: cover;
