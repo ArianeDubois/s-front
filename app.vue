@@ -23,8 +23,8 @@ const { data: seoData } = await useKql({
 // const seo = computed(() => seoData.value?.result);
 const seo = seoData.value?.result;
 setPage(seo);
-
 useSeoMeta({
+  googleSiteVerification: 'hzP1KD6gnn_J6FiKczgwacVEuM8ANGkgNAZt0gAa7Wc',
   keywords: seo?.meta_keywords,
   title: seo?.meta_title,
   ogTitle: seo?.meta_title,

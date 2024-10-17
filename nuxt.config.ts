@@ -3,15 +3,8 @@ import process from 'node:process'
 
 export default defineNuxtConfig({
   modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image'],
-
   ssr: true,
   // target: 'server',
-  site: {
-    url: 'simonguitet.com',
-    name: 'Awesome Site',
-    description: 'Welcome to my awesome site!',
-    defaultLocale: 'en', // not needed if you have @nuxtjs/i18n installed
-  },
   image: {
     domains: ['preprod.arianedubois.fr'],
     screens: {
