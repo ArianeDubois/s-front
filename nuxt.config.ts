@@ -58,20 +58,12 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    // hooks: {
-    //   'prerender:generate'(route) {
-    //     if (route.route?.includes('private')) {
-    //       route.skip = true
-    //     }
-    //   },
-    // },
-
     prerender: {
       crawlLinks: true,
       failOnError: false,
       routes: ['/photography', '/photography/'],
-      concurrency: 2,
-      timeout: 60000,
+      concurrency: 2, // Limite la concurrence pour éviter des surcharges.
+      timeout: 60000, // Temps d'attente maximum pour chaque page (60s).
     },
     output: {
       publicDir: 'dist',
@@ -89,30 +81,6 @@ export default defineNuxtConfig({
   },
   //PRELOADS
   hooks: {
-    async 'prerender:routes'(ctx) {
-      const response = await fetch(
-        'http://preprod.arianedubois.fr/s-back/public/api/kql',
-        {
-          headers: {
-            Authorization: 'Bearer test', // Remplacez par votre jeton
-          },
-        },
-      )
-      const data = await response.json()
-
-      console.log(data) // Vérifiez ici la structure de la réponse
-
-      const { pages } = data.children
-
-      if (!Array.isArray(pages)) {
-        throw new Error('The "pages" is not an array')
-      }
-
-      for (const page of pages) {
-        ctx.routes.add(`/${page.name}`)
-      }
-    },
-
     'render:route': async (url, result, context) => {
       if (url === '/') {
         const { $kql } = context.nuxtApp

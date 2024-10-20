@@ -28,9 +28,9 @@ export function setPage<T extends Record<string, any>>(page: T) {
     },
   })
 
-  useSeoMeta({
-    title,
-  })
+  // useSeoMeta({
+  //   title,
+  // })
 
   // Resolve components that depend on the full page data
   const nuxtApp = useNuxtApp()
