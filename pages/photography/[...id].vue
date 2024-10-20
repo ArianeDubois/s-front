@@ -425,7 +425,7 @@ figure {
 
 li:first-child:last-child .cover {
   /* height: calc(100vh - 30px); */
-  height: 100vh;
+  height: 100%;
   position: fixed;
   inset: 0;
 }

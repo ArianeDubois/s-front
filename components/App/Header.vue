@@ -13,10 +13,8 @@ const { data: aboutData } = await useKql({
     email: true,
     phone: true,
     description: true,
-    social: {
-      platform: true,
-      url: true,
-    },
+    social: 'page("about").social.toStructure()'
+
   },
 });
 
@@ -66,14 +64,17 @@ const toggleAbout = () => {
 
       <div class="col">
         <div>
-          <div v-html="about.email"></div>
+          <a :href="`mailto:${about.email}`">
+            {{ about.email }}
+          </a>
           <div v-html="about.phone"></div>
         </div>
       </div>
 
-      <div class="col">
-        <p>Instagram</p>
-        <p>@lacuisineduzin</p>
+      <div class="col social" v-if="about && about.social && about.social.length">
+        <div v-for="link in about.social" :key="link.url">
+          <a :href="link.url" target="_blank">{{ link.platform.trim() }}</a>
+        </div>
       </div>
     </div>
 
@@ -108,7 +109,6 @@ const toggleAbout = () => {
   .header {
     justify-content: flex-end;
     font-size: var(--font-base-xs);
-
   }
 }
 
@@ -265,5 +265,12 @@ button {
   content: ']';
   font-size: 1.2em;
   opacity: 0;
+}
+
+.col.social {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
 }
 </style>

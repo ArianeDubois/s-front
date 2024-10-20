@@ -17,10 +17,10 @@ export function setPage<T extends Record<string, any>>(page: T) {
   // Build the page meta tags
   const { siteUrl } = useRuntimeConfig().public
   const site = useSite()
-  const title = page.title
-    ? `${page.title} – ${site.value.title}`
-    : site.value.title
-  const url = joinURL(siteUrl, useRoute().path)
+  // const title = page.title
+  //   ? `${page.title} – ${site.value.title}`
+  //   : site.value.title
+  // const url = joinURL(siteUrl, useRoute().path)
 
   useHead({
     bodyAttrs: {
@@ -28,9 +28,9 @@ export function setPage<T extends Record<string, any>>(page: T) {
     },
   })
 
-  useSeoMeta({
-    title,
-  })
+  // useSeoMeta({
+  //   title,
+  // })
 
   // Resolve components that depend on the full page data
   const nuxtApp = useNuxtApp()
