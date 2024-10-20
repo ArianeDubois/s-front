@@ -28,6 +28,10 @@ export function setPage<T extends Record<string, any>>(page: T) {
     },
   })
 
+  useSeoMeta({
+    title,
+  })
+
   // Resolve components that depend on the full page data
   const nuxtApp = useNuxtApp()
   nuxtApp._nuxtPageDependenciesRendered = true
