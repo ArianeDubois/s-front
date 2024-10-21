@@ -144,8 +144,8 @@ onMounted(() => {
   }
   $gsap.to(infos.value, { opacity: 1, duration: 0.25 });
   if (page?.color) {
-    if (document.querySelector('.about-content')) {
-      $gsap.set('.about-content .col', { color: page.color });
+    if (document.querySelector('.about-overlay')) {
+      $gsap.set('.about-overlay', { color: page.color });
     }
     $gsap.set('header', { color: page.color });
     $gsap.set('body', { color: page.color });

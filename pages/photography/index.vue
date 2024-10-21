@@ -190,7 +190,7 @@ const applyRandomColorToHeader = () => {
     header.style.transition = "color 0.5s ease";
   }
   const filters = document.querySelector('.filters');
-  const about = document.querySelector('.about-content');
+  const about = document.querySelector('.about-overlay');
 
   if (about) {
     about.style.color = randomColor;
