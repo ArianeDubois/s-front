@@ -181,8 +181,8 @@ onMounted(() => {
         <li v-for="(image, index) in page?.gallery ?? []" :key="index" :class="index === 0 ? 'cover' : 'images'">
           <figure v-if="index === 0" class="cover">
             <NuxtImg @load="imageLoad()" loading="eager" :preload="true" :src="image.url" :alt="image.alt"
-              :width="image.width" :height="image.height" quality="80" format="webp"
-              :sizes="'70vw sm:70vw md:70vw lg:50vw xl:50vw'" />
+              :width="image.width" :height="image.height" quality="80" format="webp" fit="contain"
+              :sizes="'100vw sm:100vw md:100vw lg:100vw xl:100vw'" />
           </figure>
 
           <figure class="lazy-wrapper" v-else
@@ -252,7 +252,10 @@ body::-webkit-scrollbar {
 @media screen and (max-width: 720px) {
   .album-gallery {
     margin: 0 10px;
+  }
 
+  .grid {
+    padding-bottom: 250px;
   }
 }
 

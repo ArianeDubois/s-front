@@ -145,9 +145,10 @@ button {
 
 .description {
   text-align: center;
-  font-size: var(--font-big);
-  max-width: 80%;
-  color: inherit !important;
+  font-size: var(--font-base);
+  max-width: 500px;
+  padding: 0 20px;
+  /* color: inherit !important; */
 }
 
 .icon {
@@ -159,24 +160,23 @@ button {
   .about-content {
     font-size: var(--font-base-xs);
   }
-
-
 }
 
 .about-content {
   font-size: var(--font-base);
   text-align: center;
-  padding: 20px;
+  padding: 30px;
   width: 55%;
   text-transform: uppercase;
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
+  justify-content: space-between;
   gap: 30px;
 }
 
 @media screen and (max-width: 1256px) {
   .about-content {
-    justify-content: space-between;
+    justify-content: space-around;
     width: 80%;
   }
 }
@@ -226,9 +226,13 @@ button {
 
 .col {
   display: flex;
+  justify-content: center;
+  margin: auto;
   align-items: start;
   text-align: center;
-  color: inherit !important;
+  /* color: inherit !important; */
+  flex: 1;
+
 }
 
 
