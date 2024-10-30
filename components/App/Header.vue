@@ -40,7 +40,7 @@ const toggleAbout = () => {
     </a>
 
     <nav class="menu">
-      <a href="/" class="menu-item">Gallerie</a>
+      <a href="/" class="menu-item">Galerie</a>
 
       <NuxtLink class="menu-item" to="/photography">Projets</NuxtLink>
 
