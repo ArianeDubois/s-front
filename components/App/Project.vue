@@ -17,7 +17,7 @@ const next = ref(null);
 <template>
   <article :ref="`${isLeft ? 'prev' : 'next'}`"
     :class="`${isLeft ? 'project-excerpt__left' : 'project-excerpt__right'} project-excerpt`">
-    <NuxtLink :to="`/${project?.id}`">
+    <NuxtLink :to="`/${project?.id}`" prefetch>
       <figure>
         <NuxtImg :data-width="width" :data-height="height" format="webp" :preload="true"
           :sizes="'400px sm:600px md:600px lg:500px xl:800px'" quality="80"

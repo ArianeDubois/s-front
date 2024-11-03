@@ -2,11 +2,17 @@ import { siteQuery } from './queries'
 import process from 'node:process'
 
 export default defineNuxtConfig({
-  modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image'],
+  modules: ['@vueuse/nuxt', 'nuxt-kql', '@nuxt/image', '@nuxt/scripts'],
   ssr: true,
-  // target: 'server',
+
+  //   ssr: false,
+//   target: 'static',
+
   image: {
     domains: ['preprod.arianedubois.fr'],
+    alias: {
+        'kirby': 'http://preprod.arianedubois.fr/s-back/public/media/pages',
+      },
     screens: {
       xs: 320,
       sm: 640,
@@ -18,13 +24,15 @@ export default defineNuxtConfig({
     },
     formats: ['image/webp', 'image/jpeg', 'image/jpg'],
   },
+
   // plugins: ['~/plugins/gsap.js'],
   gsap: {
     extraPlugins: {
       scrollTrigger: true,
       scrollTo: true,
     },
-  },
+    autoRefresh: true,
+},
 
   runtimeConfig: {
     public: {
@@ -41,6 +49,7 @@ export default defineNuxtConfig({
       kirbySite: siteQuery,
     },
   },
+
   sitemap: {
     hostname: 'https://simonguittet.com',
     routes: async () => {
@@ -70,7 +79,14 @@ export default defineNuxtConfig({
     },
   },
 
+  //   routeRules: {
+  //     '/**': { prerender: true },
+  //     '/photography/**': { prerender: true },
+  //     '/photography': { prerender: true },
+  //   },
+
   routeRules: {
+    '/media/**': {prerender: true },
     '/**': { prerender: true },
     '/photography/**': { prerender: true },
     '/photography': { prerender: true },
@@ -79,6 +95,7 @@ export default defineNuxtConfig({
   generate: {
     fallback: true,
   },
+
   //PRELOADS
   hooks: {
     'render:route': async (url, result, context) => {
@@ -166,4 +183,6 @@ export default defineNuxtConfig({
       },
     ],
   },
+
+  compatibilityDate: '2024-11-01',
 })

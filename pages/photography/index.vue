@@ -321,7 +321,7 @@ onBeforeRouteLeave((to, from, next) => {
         :data-tags="project.tags"
         :class="['project', { clone: project.isClone, 'pointer-events-none': project.isClone }]">
 
-        <NuxtLink :to="`/${project.id}`">
+        <NuxtLink :to="`/${project.id}`" prefetch>
           <figure ref="imageWrapper"
             :style="`width: 100%; position: relative;padding-top: ${project?.cover?.height / project?.cover?.width * 100}%`">
             <ElementLazyImage ref="lazyImage" :is-loading="true" :is-preload="true" :width="'100%'" :height="'100%'"

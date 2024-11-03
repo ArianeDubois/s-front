@@ -18,10 +18,11 @@
   "devDependencies": {
     "@antfu/eslint-config": "^2.18.0",
     "@nuxt/image": "^1.7.0",
+    "@nuxt/scripts": "^0.9.5",
     "@nuxtjs/seo": "2.0.0-rc.23",
     "@sindresorhus/slugify": "^2.2.1",
     "@types/node": "^20.12.12",
-    "@vueuse/nuxt": "^10.9.0",
+    "@vueuse/nuxt": "^10.11.1",
     "eslint": "^9.2.0",
     "medium-zoom": "^1.1.0",
     "nuxt": "^3.11.2",

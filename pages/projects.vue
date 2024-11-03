@@ -51,7 +51,7 @@ const { data: photographyData } = await useKql({
 
     <ul class="home-grid">
       <li v-for="(album, index) in photographyData?.result ?? []" :key="index">
-        <NuxtLink :to="`/${album.id}`">
+        <NuxtLink :to="`/${album.id}`" prefetch>
           <figure>
             <NuxtImg loading="lazy" :src="album?.cover?.resized?.url ?? album?.images?.[0]?.resized?.url"
               :alt="album?.cover?.alt ?? album?.images?.[0]?.alt" width="auto" height="auto" quality="80" format="webp"
