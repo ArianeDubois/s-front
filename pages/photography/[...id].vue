@@ -213,17 +213,15 @@ onMounted(() => {
             </ul>
         </div>
 
-
+        <div ref="scrollCta" class="scroll-cta" v-if="page?.gallery && page.gallery.length > 1"
+            @click="scrollToSecondImage">
+            <svg width="100%" height="100%" viewBox="0 0 11 74" fill="none">
+                <path d="M9.5 58.5L5.50002 70L1.5 58.5L5.50002 58.5L9.5 58.5Z" fill="currentColor" />
+                <path d="M5.50002 70L5.50003 -3.49689e-07M5.50002 70L9.5 58.5L1.5 58.5L5.50002 70Z"
+                    stroke="currentColor" stroke-width="2" />
+            </svg>
+        </div>
         <div ref="infos" class="infos">
-            <div ref="scrollCta" class="scroll-cta" v-if="page?.gallery && page.gallery.length > 1"
-                @click="scrollToSecondImage">
-                <svg width="100%" height="100%" viewBox="0 0 11 74" fill="none">
-                    <path d="M9.5 58.5L5.50002 70L1.5 58.5L5.50002 58.5L9.5 58.5Z" fill="currentColor" />
-                    <path d="M5.50002 70L5.50003 -3.49689e-07M5.50002 70L9.5 58.5L1.5 58.5L5.50002 70Z"
-                        stroke="currentColor" stroke-width="2" />
-                </svg>
-            </div>
-
             <NuxtLink :style="`color: ${page.color}; pointer-events:${children[pageIndex - 1] ? 'auto' : 'none'}`"
                 :to="'/' + (children[pageIndex - 1] ? children[pageIndex - 1].id : children[children.length - 1].id)"
                 class="button-nav" prefetch>PREV</NuxtLink>
